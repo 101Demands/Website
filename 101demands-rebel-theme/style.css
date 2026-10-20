@@ -1,0 +1,160 @@
+/*
+Theme Name: 101 Demands Rebel Theme
+Theme URI: https://101demands.org
+Author: 101 Demands Global Tech Collective
+Description: Full-bleed poster theme for the July 3 Global Mobilization & 101 Demands platform.
+Version: 1.0.2
+License: GPL-3.0+
+*/
+
+:root {
+    --j3-espresso: #1c130e;
+    --j3-espresso-dark: #120c08;
+    --j3-orange: #ea580c;
+    --j3-amber: #f59e0b;
+    --j3-parchment: #fbf8f3;
+    --j3-sand: #f3ede2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    background-color: var(--j3-parchment);
+    color: var(--j3-espresso);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Offset sticky header when logged into WordPress Admin */
+body.admin-bar .j3-topbar {
+    top: 32px;
+}
+@media screen and (max-width: 782px) {
+    body.admin-bar .j3-topbar {
+        top: 46px;
+    }
+}
+
+.j3-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background: var(--j3-espresso-dark);
+    color: #ffffff;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    width: 100%;
+}
+
+.j3-badge-orange {
+    background: var(--j3-orange);
+    color: #ffffff;
+    font-family: 'Anton', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    line-height: 1.2;
+}
+
+.j3-badge-amber {
+    background: var(--j3-amber);
+    color: var(--j3-espresso-dark);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.j3-nav {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.j3-nav a {
+    color: #e7e5e4;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.15s ease;
+}
+
+.j3-nav a:hover {
+    color: var(--j3-amber);
+}
+
+.j3-btn-orange {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--j3-orange);
+    color: #ffffff !important;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -4px rgba(234, 88, 12, 0.5);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.j3-btn-orange:hover {
+    background: #d9460f;
+    transform: translateY(-1px);
+}
+
+.j3-site-main {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.j3-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.j3-poster-title {
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    line-height: 1.02;
+    letter-spacing: 0.5px;
+}
+
+.j3-brush {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    color: var(--j3-orange);
+    line-height: 1.2;
+}
+
+.j3-footer {
+    background: var(--j3-espresso-dark);
+    color: #a8a29e;
+    text-align: center;
+    padding: 56px 24px;
+    font-size: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    width: 100%;
+}
+/* === END OF STYLE.CSS === */
