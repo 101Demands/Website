@@ -1,0 +1,32 @@
+name: Deploy to 1984 Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Sync Theme and Plugins via SFTP
+        env:
+          SFTP_PASS: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          lftp -u "leila@101demands.org","$SFTP_PASS" sftp://audrey.shared.1984.is:2222 <<EOF
+          set sftp:auto-confirm yes
+          set net:timeout 15
+          set net:max-retries 2
+          mirror -R --verbose 101demands-rebel-theme/ /htdocs/wp-content/themes/101demands-rebel-theme/
+          put plugins/101-core-crm.php -o /htdocs/wp-content/plugins/101-core-crm/101-core-crm.php || put plugins/101-core-crm.php -o /htdocs/wp-content/plugins/101-core-crm.php
+          put plugins/101-appeal-coalition.php -o /htdocs/wp-content/plugins/101-appeal-coalition/101-appeal-coalition.php || put plugins/101-appeal-coalition.php -o /htdocs/wp-content/plugins/101-appeal-coalition.php
+          put plugins/101-map-assemblies.php -o /htdocs/wp-content/plugins/101-map-assemblies/101-map-assemblies.php || put plugins/101-map-assemblies.php -o /htdocs/wp-content/plugins/101-map-assemblies.php
+          put plugins/101-demands-voting.php -o /htdocs/wp-content/plugins/101-demands-voting/101-demands-voting.php || put plugins/101-demands-voting.php -o /htdocs/wp-content/plugins/101-demands-voting.php
+          bye
+          EOF
