@@ -1,15 +1,9 @@
 <?php
 /**
- * 101 Core CRM - Shared AI Semantic Engine & Zero-Friction Magic Passport
- *
- * Powers:
- * 1. Citizen Demand Clustering & Org Matchmaking (101-demands-voting)
- * 2. Civil Society Bridge Matchmaking & 3 June / 3 July Routing (101-appeal-coalition)
- * 3. Organizational Collaboration Smorgasbord Overlap Synthesis (101-smorgasbord-coalition)
- *
- * Architecture:
- * - Strict PII Firewall: Never sends names, emails, or IPs to external AI APIs.
- * - Dual-Engine Ready: Supports Google Gemini API OR a self-hosted Local LLM (Ollama/vLLM).
+ * Plugin Name: 101 Demands — Module 5: AI Semantic & Privacy Engine
+ * Description: Powers zero-PII semantic matchmaking across Citizen Demands, the Civil Society Bridge, and the Collaboration Smorgasbord.
+ * Version: 1.0.0
+ * Author: 101 Demands Global Tech Collective
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
