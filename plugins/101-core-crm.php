@@ -32,7 +32,7 @@ add_action( 'init', function() {
     register_post_type( 'mobilization_hub', [
         'labels'       => [ 'name' => 'Assemblies & Events', 'singular_name' => 'Assembly / Event' ],
         'public'       => true,
-        'has_archive'  => true,
+        'has_archive'  => false,
         'rewrite'      => [ 'slug' => 'assemblies' ],
         'menu_icon'    => 'dashicons-location-alt',
         'supports'     => [ 'title', 'editor', 'custom-fields' ],
