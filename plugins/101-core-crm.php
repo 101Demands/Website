@@ -94,3 +94,4 @@ register_activation_hook( __FILE__, function() {
     }
     flush_rewrite_rules();
 });
+require_once plugin_dir_path( __FILE__ ) . 'class-101-ai-engine.php';
