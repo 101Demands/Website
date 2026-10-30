@@ -165,3 +165,12 @@ add_shortcode( 'mobilization_vision_0307', function() {
 	<?php
 	return ob_get_clean();
 } );
+
+add_action( 'admin_init', function() {
+	if ( function_exists( 'opcache_get_status' ) && function_exists( 'opcache_reset' ) ) {
+		$status = @opcache_get_status( false );
+		if ( isset( $status['interned_strings_usage']['free_memory'] ) && $status['interned_strings_usage']['free_memory'] < 65536 ) {
+			@opcache_reset();
+		}
+	}
+} );
