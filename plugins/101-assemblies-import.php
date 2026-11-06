@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 101 Demands — Module 3.1: Assemblies & Hubs CSV Importer
  * Description: Dedicated CSV importer for Mobilization Hubs and Assemblies with customizable field mapping, delimiter detection, and assembly type assignment.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      101 Demands Global Tech Collective
  * Text Domain: 101-assemblies-import
  * Domain Path: /languages
@@ -417,7 +417,7 @@ function july3_render_importer_step2() {
             <!-- Assembly Type Assignment Section -->
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
                 <h3 style="margin:0 0 12px;font-size:16px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px;">
-                    <span>📍</span> <?php esc_html_e( 'Assembly Type / Marker Color Assignment', '101-assemblies-import' ); ?>
+                    <?php esc_html_e( 'Assembly Type / Marker Color Assignment', '101-assemblies-import' ); ?>
                 </h3>
                 <p style="margin:0 0 16px;color:#64748b;font-size:13.5px;">
                     <?php esc_html_e( 'Choose which assembly type will be assigned to all imported entries:', '101-assemblies-import' ); ?>
@@ -465,7 +465,7 @@ function july3_render_importer_step2() {
 
             <!-- Import Settings & Duplicate Handling -->
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:24px;margin-bottom:28px;">
-                <h3 style="margin:0 0 14px;font-size:16px;font-weight:800;color:#0f172a;">⚙️ <?php esc_html_e( 'Import Settings &amp; Duplicate Handling', '101-assemblies-import' ); ?></h3>
+                <h3 style="margin:0 0 14px;font-size:16px;font-weight:800;color:#0f172a;"><?php esc_html_e( 'Import Settings &amp; Duplicate Handling', '101-assemblies-import' ); ?></h3>
 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
                     <div>
@@ -492,7 +492,6 @@ function july3_render_importer_step2() {
                 <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=mobilization_hub&page=101-assemblies-import' ) ); ?>" class="button button-large">
                     ← <?php esc_html_e( 'Back', '101-assemblies-import' ); ?>
                 </a>
-
                 <button type="submit" class="button button-primary button-hero" style="font-weight:800;background:#16a34a;border-color:#15803d;padding:0 32px;border-radius:8px;">
                     <?php esc_html_e( 'Start Import Now →', '101-assemblies-import' ); ?>
                 </button>
@@ -747,7 +746,7 @@ function july3_render_importer_step3() {
     ?>
     <div style="background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:28px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);margin-top:15px;">
         <div style="margin-bottom:24px;">
-            <h2 style="margin:0 0 6px;font-size:20px;font-weight:800;color:#0f172a;">🎉 <?php esc_html_e( 'Import Completed Successfully!', '101-assemblies-import' ); ?></h2>
+            <h2 style="margin:0 0 6px;font-size:20px;font-weight:800;color:#0f172a;"><?php esc_html_e( 'Import Completed Successfully!', '101-assemblies-import' ); ?></h2>
             <p style="margin:0;color:#64748b;font-size:14px;">
                 <?php esc_html_e( 'Your CSV data has been processed and saved into the Assemblies database.', '101-assemblies-import' ); ?>
             </p>
@@ -826,13 +825,13 @@ function july3_render_importer_step3() {
                                 </td>
                                 <td>
                                     <?php if ( 'created' === $entry['status'] ) : ?>
-                                        <span style="color:#16a34a;font-weight:700;">✅ <?php echo esc_html( $entry['msg'] ); ?></span>
+                                        <span style="color:#16a34a;font-weight:700;"><?php echo esc_html( $entry['msg'] ); ?></span>
                                     <?php elseif ( 'updated' === $entry['status'] ) : ?>
-                                        <span style="color:#2563eb;font-weight:700;">🔄 <?php echo esc_html( $entry['msg'] ); ?></span>
+                                        <span style="color:#2563eb;font-weight:700;"><?php echo esc_html( $entry['msg'] ); ?></span>
                                     <?php elseif ( 'skipped' === $entry['status'] ) : ?>
-                                        <span style="color:#ca8a04;font-weight:700;">⚠️ <?php echo esc_html( $entry['msg'] ); ?></span>
+                                        <span style="color:#ca8a04;font-weight:700;"><?php echo esc_html( $entry['msg'] ); ?></span>
                                     <?php else : ?>
-                                        <span style="color:#dc2626;font-weight:700;">❌ <?php echo esc_html( $entry['msg'] ); ?></span>
+                                        <span style="color:#dc2626;font-weight:700;"><?php echo esc_html( $entry['msg'] ); ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -849,13 +848,12 @@ function july3_render_importer_step3() {
             </div>
         </div>
 
-        <!-- Action Links -->
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=mobilization_hub' ) ); ?>" class="button button-primary" style="font-weight:700;padding:6px 18px;height:auto;">
                 <?php esc_html_e( 'View All Assemblies (WordPress Admin) →', '101-assemblies-import' ); ?>
             </a>
             <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=mobilization_hub&page=101-assemblies-import' ) ); ?>" class="button button-secondary" style="padding:6px 16px;height:auto;">
-                📥 <?php esc_html_e( 'Import Another CSV File', '101-assemblies-import' ); ?>
+                <?php esc_html_e( 'Import Another CSV File', '101-assemblies-import' ); ?>
             </a>
         </div>
     </div>
