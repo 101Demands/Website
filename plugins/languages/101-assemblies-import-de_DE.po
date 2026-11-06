@@ -1,0 +1,272 @@
+# Translation of 101 Demands — Module 3.1: Assemblies & Hubs CSV Importer in German
+# Copyright (C) 2026 101 Demands Global Tech Collective
+# This file is distributed under the GPL-3.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: 101 Demands — Module 3.1: Assemblies & Hubs CSV Importer 1.0.0\n"
+"Report-Msgid-Bugs-To: https://101demands.org\n"
+"POT-Creation-Date: 2026-11-06 14:50+0100\n"
+"PO-Revision-Date: 2026-11-06 14:50+0100\n"
+"Last-Translator: 101 Demands Tech Collective\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: 101-assemblies-import\n"
+
+msgid "101 Demands — Module 3.1: Assemblies & Hubs CSV Importer"
+msgstr "101 Demands — Modul 3.1: Versammlungen & Hubs CSV-Importer"
+
+msgid "Dedicated CSV importer for Mobilization Hubs and Assemblies with customizable field mapping, delimiter detection, and assembly type assignment."
+msgstr "Dedizierter CSV-Importer für Versammlungen und Hubs mit anpassbarer Feldzuordnung, Trennzeichen-Erkennung und Typ-Zuweisung."
+
+msgid "Import Assemblies (CSV)"
+msgstr "Versammlungen importieren (CSV)"
+
+msgid "Import CSV"
+msgstr "CSV importieren"
+
+msgid "Assemblies Importer"
+msgstr "Versammlungs-Importer"
+
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Du hast nicht die erforderlichen Rechte, um auf diese Seite zuzugreifen."
+
+msgid "Assemblies &amp; Hubs CSV Importer"
+msgstr "CSV-Importer für Versammlungen &amp; Hubs"
+
+msgid "Step 1: Select CSV File to Import"
+msgstr "Schritt 1: CSV-Datei für den Import auswählen"
+
+msgid "Upload your CSV file containing assembly locations, town halls, or cities. In the next step, you can customize which columns map to the title, coordinates, and other details, as well as select the assembly type."
+msgstr "Lade deine CSV-Datei mit Versammlungsorten, Town Halls oder Städten hoch. Im nächsten Schritt kannst du festlegen, welche Spalten dem Titel, den Koordinaten und weiteren Details entsprechen, sowie den Versammlungstyp auswählen."
+
+msgid "Choose a CSV file from your computer"
+msgstr "Wähle eine CSV-Datei von deinem Computer"
+
+msgid "Supported formats: .csv, .txt, .tsv (UTF-8 encoding recommended)"
+msgstr "Unterstützte Formate: .csv, .txt, .tsv (UTF-8-Kodierung empfohlen)"
+
+msgid "CSV Delimiter / Separator"
+msgstr "CSV-Trennzeichen / Delimiter"
+
+msgid "Auto-Detect (Recommended)"
+msgstr "Automatisch erkennen (Empfohlen)"
+
+msgid "Semicolon ( ; )"
+msgstr "Semikolon ( ; )"
+
+msgid "Comma ( , )"
+msgstr "Komma ( , )"
+
+msgid "Tab ( \\t )"
+msgstr "Tabulator ( \\t )"
+
+msgid "Pipe ( | )"
+msgstr "Pipe ( | )"
+
+msgid "Upload &amp; Continue to Field Mapping →"
+msgstr "Hochladen &amp; weiter zur Feldzuordnung →"
+
+msgid "Security verification failed. Please try again."
+msgstr "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuche es erneut."
+
+msgid "No CSV file was selected or uploaded. Please go back and choose a file."
+msgstr "Es wurde keine CSV-Datei ausgewählt oder hochgeladen. Bitte gehe zurück und wähle eine Datei aus."
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Could not parse headers from the CSV file. Please verify the delimiter and format."
+msgstr "Kopfzeilen konnten nicht aus der CSV-Datei ausgelesen werden. Bitte überprüfe Trennzeichen und Format."
+
+msgid "Step 2: Customize Field Mapping &amp; Assembly Type"
+msgstr "Schritt 2: Feldzuordnung &amp; Versammlungstyp anpassen"
+
+msgid "File: %s | Total Rows: %d | Detected Delimiter: \"%s\""
+msgstr "Datei: %s | Zeilen gesamt: %d | Erkanntes Trennzeichen: \"%s\""
+
+msgid "Upload Different File"
+msgstr "Andere Datei hochladen"
+
+msgid "CSV Data Preview (First 5 Rows):"
+msgstr "CSV-Datenvorschau (Erste 5 Zeilen):"
+
+msgid "Column Mapping (Match CSV Columns to Assembly Fields)"
+msgstr "Spalten-Zuordnung (CSV-Spalten den Versammlungsfeldern zuweisen)"
+
+msgid "Assembly Name / Title"
+msgstr "Name / Titel der Versammlung"
+
+msgid "Required"
+msgstr "Pflicht"
+
+msgid "-- Select Column --"
+msgstr "-- Spalte auswählen --"
+
+msgid "The post title on the map and listings (e.g. city name)."
+msgstr "Der Beitragstitel auf der Karte und in Übersichten (z. B. Stadtname)."
+
+msgid "Latitude (Breitengrad)"
+msgstr "Breitengrad (Latitude)"
+
+msgid "Decimal latitude value (e.g. 52.5200)."
+msgstr "Dezimalwert für Breitengrad (z. B. 52.5200)."
+
+msgid "Longitude (Längengrad)"
+msgstr "Längengrad (Longitude)"
+
+msgid "Decimal longitude value (e.g. 13.4050)."
+msgstr "Dezimalwert für Längengrad (z. B. 13.4050)."
+
+msgid "Meeting Point / Address"
+msgstr "Treffpunkt / Adresse"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "-- None / Leave Empty --"
+msgstr "-- Keine / Leer lassen --"
+
+msgid "Next Meeting / Date &amp; Time"
+msgstr "Nächstes Treffen / Datum &amp; Uhrzeit"
+
+msgid "Link / Chat / RSVP URL"
+msgstr "Link / Chat / RSVP URL"
+
+msgid "Assembly Type / Marker Color Assignment"
+msgstr "Versammlungstyp / Zuweisung der Pin-Farbe"
+
+msgid "Choose which assembly type will be assigned to all imported entries:"
+msgstr "Wähle, welcher Versammlungstyp allen importierten Einträgen zugewiesen wird:"
+
+msgid "Preparation Meeting (Yellow)"
+msgstr "Vorbereitungstreffen (Gelb)"
+
+msgid "Confirmed Assembly (Green)"
+msgstr "Bestätigte Versammlung (Grün)"
+
+msgid "July 3 Capital Convergence (Orange / Large)"
+msgstr "July 3 Hauptstadt-Konvergenz (Orange / Groß)"
+
+msgid "Talk, Town Hall &amp; Training (Purple)"
+msgstr "Vortrag, Bürgerversammlung &amp; Schulung (Lila)"
+
+msgid "Or read assembly type dynamically from a CSV column:"
+msgstr "Oder Versammlungstyp dynamisch aus einer CSV-Spalte auslesen:"
+
+msgid "Import Settings &amp; Duplicate Handling"
+msgstr "Import-Einstellungen &amp; Duplikat-Behandlung"
+
+msgid "Post Status"
+msgstr "Beitragsstatus"
+
+msgid "Published (Visible on Map immediately)"
+msgstr "Veröffentlicht (Sofort auf der Karte sichtbar)"
+
+msgid "Draft (Hidden until published)"
+msgstr "Entwurf (Unsichtbar bis zur Veröffentlichung)"
+
+msgid "Duplicate Handling (Matching by Title)"
+msgstr "Duplikat-Behandlung (Abgleich nach Titel)"
+
+msgid "Update existing assembly (Recommended)"
+msgstr "Bestehende Versammlung aktualisieren (Empfohlen)"
+
+msgid "Skip duplicates (Do not overwrite)"
+msgstr "Duplikate überspringen (Nicht überschreiben)"
+
+msgid "Always create new post (Allow duplicates)"
+msgstr "Immer neuen Beitrag erstellen (Duplikate erlauben)"
+
+msgid "Start Import Now →"
+msgstr "Import jetzt starten →"
+
+msgid "Temporary import file not found or expired. Please upload the CSV again."
+msgstr "Temporäre Importdatei nicht gefunden oder abgelaufen. Bitte lade die CSV-Datei erneut hoch."
+
+msgid "Back to Upload"
+msgstr "Zurück zum Upload"
+
+msgid "Required field mappings (Title, Latitude, Longitude) were missing."
+msgstr "Erforderliche Feldzuordnungen (Titel, Breitengrad, Längengrad) fehlen."
+
+msgid "Could not open CSV file for processing."
+msgstr "CSV-Datei konnte nicht zur Verarbeitung geöffnet werden."
+
+msgid "Empty CSV file."
+msgstr "Leere CSV-Datei."
+
+msgid "(Untitled)"
+msgstr "(Ohne Titel)"
+
+msgid "Invalid title or coordinates"
+msgstr "Ungültiger Titel oder ungültige Koordinaten"
+
+msgid "Skipped (Duplicate)"
+msgstr "Übersprungen (Duplikat)"
+
+msgid "Updated"
+msgstr "Aktualisiert"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Import Completed Successfully!"
+msgstr "Import erfolgreich abgeschlossen!"
+
+msgid "Your CSV data has been processed and saved into the Assemblies database."
+msgstr "Deine CSV-Daten wurden verarbeitet und in der Versammlungs-Datenbank gespeichert."
+
+msgid "Total Processed"
+msgstr "Gesamt verarbeitet"
+
+msgid "New Assemblies Created"
+msgstr "Neue Versammlungen erstellt"
+
+msgid "Existing Updated"
+msgstr "Bestehende aktualisiert"
+
+msgid "Skipped (Duplicates)"
+msgstr "Übersprungen (Duplikate)"
+
+msgid "Invalid / Errors"
+msgstr "Ungültig / Fehler"
+
+msgid "Import Log &amp; Results:"
+msgstr "Import-Protokoll &amp; Ergebnisse:"
+
+msgid "Coordinates (Lat / Lng)"
+msgstr "Koordinaten (Lat / Lng)"
+
+msgid "Assigned Type"
+msgstr "Zugewiesener Typ"
+
+msgid "Result"
+msgstr "Ergebnis"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Preparation Meeting"
+msgstr "Vorbereitungstreffen"
+
+msgid "Confirmed Assembly"
+msgstr "Bestätigte Versammlung"
+
+msgid "Capital Convergence"
+msgstr "Hauptstadt-Konvergenz"
+
+msgid "Talk / Event"
+msgstr "Vortrag / Event"
+
+msgid "Edit Post ↗"
+msgstr "Beitrag bearbeiten ↗"
+
+msgid "View All Assemblies (WordPress Admin) →"
+msgstr "Alle Versammlungen anzeigen (WordPress Admin) →"
+
+msgid "Import Another CSV File"
+msgstr "Weitere CSV-Datei importieren"

@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the 101 Demands — Module 3: Assemblies, Map & Calendar package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 101 Demands — Module 3: Assemblies, Map & Calendar\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-06 14:49+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/wp-content/plugins/101-map-assemblies.php:43
+msgid "REAL DEMOCRACY IN ACTION"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:44
+msgid "CITIZEN &amp; COMMUNITY ASSEMBLIES"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:45
+msgid "The key to unlocking real change across every demand"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:49
+msgid ""
+"For decades, vital reforms on climate, wealth inequality, housing, and peace "
+"have been blocked by short-term party politics and entrenched lobbying "
+"interests. <strong>Assemblies are how we break that deadlock.</strong> When "
+"ordinary people are given the time, independent evidence, and space to "
+"deliberate together, they consistently reach fair, courageous solutions that "
+"career politicians refuse to touch."
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:54
+msgid "01 // BEYOND GOVERNANCE FAILURES"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:55
+msgid "Power in the Hands of the People"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:57
+msgid ""
+"Instead of outsourcing our future to distant political classes and corporate "
+"lobbyists, assemblies put decision-making directly into the hands of "
+"everyday citizens and local communities."
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:62
+msgid "02 // INFORMED DELIBERATION"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:63
+msgid "The Key That Unlocks Every Demand"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:65
+msgid ""
+"Whether the issue is taxing extreme wealth, restoring nature, or fixing "
+"housing, assemblies bring communities and independent experts together to "
+"build mandates with real public legitimacy."
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:70
+msgid "03 // LOCAL TO GLOBAL"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:71
+msgid "From Town Halls to July 3rd"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:73
+msgid ""
+"Local town halls and grassroots assemblies are meeting now to deliberate, "
+"compile local evidence reports, and build towards the mass capital-city "
+"convergences on July 3rd."
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:119
+msgid "LOCAL ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:120
+msgid "THE GLOBAL ASSEMBLIES MAP"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:121
+msgid "Find a local assembly, town hall, or training near you"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:127
+#, php-format
+msgid "All Pins (%d)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:131
+msgid "Talks, Town Halls &amp; Trainings"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:135
+msgid "Confirmed Assemblies"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:139
+msgid "July 3 Capital Convergences"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:143
+msgid "Preparation Meetings"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:153
+msgid "🗺️ Explore Assemblies, Full Map &amp; Key Dates →"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:166
+msgid "Telegram →"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:202
+msgid "KEY DATES &amp; REGIONAL GATHERINGS"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:203
+msgid "THE MOBILIZATION CALENDAR"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:243
+msgid "📍 Hub & Assembly Details (Map Settings)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:266
+msgid "Latitude"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:266
+#: src/wp-content/plugins/101-map-assemblies.php:271
+msgid "Required"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:268
+msgid "Decimal value (e.g. 52.5200 for Berlin)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:271
+msgid "Longitude"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:273
+msgid "Decimal value (e.g. 13.4050 for Berlin)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:278
+msgid "Assembly Type / Marker Color"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:283
+msgid "Confirmed Assembly (Green)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:288
+msgid "July 3 Capital Convergence (Orange / Large)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:293
+msgid "Talk, Town Hall &amp; Training (Purple)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:298
+msgid "Preparation Meeting (Yellow)"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:304
+msgid "Meeting Point / Address"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:305
+msgid "e.g. Town Square 1, City"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:309
+msgid "Next Meeting / Date &amp; Time"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:310
+msgid "e.g. Saturday, 20 March 2027, 14:00"
+msgstr ""
+
+#: src/wp-content/plugins/101-map-assemblies.php:314
+msgid "Link / Chat / RSVP URL"
+msgstr ""

@@ -1,0 +1,155 @@
+# Translation of 101 Demands — Module 3: Assemblies, Map & Calendar in German
+# Copyright (C) 2026 101 Demands Global Tech Collective
+# This file is distributed under the GPL-3.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: 101 Demands — Module 3: Assemblies, Map & Calendar 1.2.2\n"
+"Report-Msgid-Bugs-To: https://101demands.org\n"
+"POT-Creation-Date: 2026-11-06 14:30+0100\n"
+"PO-Revision-Date: 2026-11-06 14:30+0100\n"
+"Last-Translator: 101 Demands Tech Collective\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: 101-map-assemblies\n"
+
+msgid "101 Demands — Module 3: Assemblies, Map & Calendar"
+msgstr "101 Demands — Modul 3: Versammlungen, Karte & Kalender"
+
+msgid "Powers [assemblies_intro], [mobilization_map] (supports mode=\"teaser\" for homepage or full mode for /assemblies/), and [teamup_calendar]."
+msgstr "Stellt [assemblies_intro], [mobilization_map] (unterstützt mode=\"teaser\" für die Startseite oder den Vollmodus für /assemblies/) sowie [teamup_calendar] bereit."
+
+msgid "REAL DEMOCRACY IN ACTION"
+msgstr "ECHTE DEMOKRATIE IN AKTION"
+
+msgid "CITIZEN &amp; COMMUNITY ASSEMBLIES"
+msgstr "BÜRGER- &amp; GEMEINSCHAFTSVERSAMMLUNGEN"
+
+msgid "The key to unlocking real change across every demand"
+msgstr "Der Schlüssel zu echtem Wandel bei jeder Forderung"
+
+msgid "For decades, vital reforms on climate, wealth inequality, housing, and peace have been blocked by short-term party politics and entrenched lobbying interests. <strong>Assemblies are how we break that deadlock.</strong> When ordinary people are given the time, independent evidence, and space to deliberate together, they consistently reach fair, courageous solutions that career politicians refuse to touch."
+msgstr "Seit Jahrzehnten werden lebenswichtige Reformen zu Klima, Vermögensungleichheit, Wohnen und Frieden durch kurzfristige Parteipolitik und festgefahrene Lobbyinteressen blockiert. <strong>Versammlungen sind der Weg, diesen Stillstand zu durchbrechen.</strong> Wenn gewöhnliche Menschen die Zeit, unabhängige Beweise und den Raum erhalten, gemeinsam zu beraten, finden sie stets gerechte, mutige Lösungen, die Berufspolitiker nicht anzufassen wagen."
+
+msgid "01 // BEYOND GOVERNANCE FAILURES"
+msgstr "01 // JENSEITS DES STAATLICHEN VERSAGENS"
+
+msgid "Power in the Hands of the People"
+msgstr "Macht in den Händen der Menschen"
+
+msgid "Instead of outsourcing our future to distant political classes and corporate lobbyists, assemblies put decision-making directly into the hands of everyday citizens and local communities."
+msgstr "Statt unsere Zukunft an ferne Politikerklassen und Konzernlobbyisten auszulagern, legen Versammlungen die Entscheidungsfindung direkt in die Hände normaler Bürger und lokaler Gemeinschaften."
+
+msgid "02 // INFORMED DELIBERATION"
+msgstr "02 // INFORMIERTE BERATUNG"
+
+msgid "The Key That Unlocks Every Demand"
+msgstr "Der Schlüssel, der jede Forderung eröffnet"
+
+msgid "Whether the issue is taxing extreme wealth, restoring nature, or fixing housing, assemblies bring communities and independent experts together to build mandates with real public legitimacy."
+msgstr "Ob es um die Besteuerung extremen Reichtums, die Renaturierung oder bezahlbaren Wohnraum geht: Versammlungen bringen Gemeinschaften und unabhängige Experten zusammen, um Mandate mit echter gesellschaftlicher Legitimität zu schaffen."
+
+msgid "03 // LOCAL TO GLOBAL"
+msgstr "03 // VON LOKAL BIS GLOBAL"
+
+msgid "From Town Halls to July 3rd"
+msgstr "Von Bürgerversammlungen bis zum 3. Juli"
+
+msgid "Local town halls and grassroots assemblies are meeting now to deliberate, compile local evidence reports, and build towards the mass capital-city convergences on July 3rd."
+msgstr "Lokale Bürgerversammlungen und Basisinitiativen treffen sich ab sofort zur Beratung, Erstellung lokaler Erfahrungsberichte und Vorbereitung auf die großen Hauptstadtdemonstrationen am 3. Juli."
+
+msgid "LOCAL ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES"
+msgstr "LOKALE VERSAMMLUNGEN, TOWN HALLS &amp; KONVERGENZEN"
+
+msgid "THE GLOBAL ASSEMBLIES MAP"
+msgstr "DIE GLOBALE VERSAMMLUNGSKARTE"
+
+msgid "Find a local assembly, town hall, or training near you"
+msgstr "Finde eine lokale Versammlung, Bürgerversammlung oder Schulung in deiner Nähe"
+
+msgid "All Pins (%d)"
+msgstr "Alle Pins (%d)"
+
+msgid "Talks, Town Halls &amp; Trainings"
+msgstr "Vorträge, Bürgerversammlungen &amp; Schulungen"
+
+msgid "Confirmed Assemblies"
+msgstr "Bestätigte Versammlungen"
+
+msgid "July 3 Capital Convergences"
+msgstr "July 3 Hauptstadt-Konvergenzen"
+
+msgid "Preparation Meetings"
+msgstr "Vorbereitungstreffen"
+
+msgid "🗺️ Explore Assemblies, Full Map &amp; Key Dates →"
+msgstr "🗺️ Versammlungen, vollständige Karte &amp; wichtige Termine entdecken →"
+
+msgid "🔗 Details &amp; RSVP →"
+msgstr "🔗 Details &amp; Anmeldung →"
+
+msgid "KEY DATES &amp; REGIONAL GATHERINGS"
+msgstr "WICHTIGE TERMINE &amp; REGIONALE TREFFEN"
+
+msgid "THE MOBILIZATION CALENDAR"
+msgstr "DER MOBILISIERUNGSKALENDER"
+
+msgid "📍 Hub & Assembly Details (Map Settings)"
+msgstr "📍 Hub & Assembly Details (Karten-Einstellungen)"
+
+msgid "Latitude"
+msgstr "Breitengrad"
+
+msgid "Longitude"
+msgstr "Längengrad"
+
+msgid "Required"
+msgstr "Pflicht"
+
+msgid "Decimal value (e.g. 52.5200 for Berlin)"
+msgstr "Dezimalwert (z. B. 52.5200 für Berlin)"
+
+msgid "Decimal value (e.g. 13.4050 for Berlin)"
+msgstr "Dezimalwert (z. B. 13.4050 für Berlin)"
+
+msgid "Assembly Type / Marker Color"
+msgstr "Typ der Versammlung / Pin-Farbe"
+
+msgid "Confirmed Assembly (Green)"
+msgstr "Bestätigte Versammlung (Grün)"
+
+msgid "July 3 Capital Convergence (Orange / Large)"
+msgstr "July 3 Hauptstadt-Konvergenz (Orange / Groß)"
+
+msgid "Talk, Town Hall &amp; Training (Purple)"
+msgstr "Vortrag, Bürgerversammlung &amp; Schulung (Lila)"
+
+msgid "Preparation Meeting (Yellow)"
+msgstr "Vorbereitungstreffen (Gelb)"
+
+msgid "Meeting Point / Address"
+msgstr "Treffpunkt / Adresse"
+
+msgid "e.g. Town Square 1, City"
+msgstr "z. B. Marktplatz 1, Leipzig"
+
+msgid "Next Meeting / Date &amp; Time"
+msgstr "Nächstes Treffen / Datum &amp; Uhrzeit"
+
+msgid "e.g. 2027-07-03 14:00"
+msgstr "z. B. 2027-07-03 14:00"
+
+msgid "Clear Date"
+msgstr "Datum leeren"
+
+msgid "Pick the date and time for the next scheduled meeting or assembly."
+msgstr "Wähle Datum und Uhrzeit für das nächste geplante Treffen über den Kalender aus."
+
+msgid "e.g. Saturday, 20 March 2027, 14:00"
+msgstr "z. B. Samstag, 20. März 2027, 14:00 Uhr"
+
+msgid "Link / Chat / RSVP URL"
+msgstr "Link / Chat / RSVP URL"
