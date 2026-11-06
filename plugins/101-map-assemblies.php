@@ -81,71 +81,143 @@ function july3_mod3_render_assemblies_intro() {
 }
 add_shortcode( 'assemblies_intro', 'july3_mod3_render_assemblies_intro' );
 
+/**
+ * Retrieve mobilization hub pins from current site or across all multisite sub-sites.
+ *
+ * @param bool $is_global Whether to fetch pins from all network sites in a multisite install.
+ * @return array Array of pin data.
+ */
+function july3_mod3_get_hub_pins( $is_global = false ) {
+    $pins = array();
+
+    if ( $is_global && is_multisite() ) {
+        $sites = get_sites( array(
+            'number'   => 500,
+            'deleted'  => 0,
+            'archived' => 0,
+            'spam'     => 0,
+        ) );
+
+        foreach ( $sites as $site ) {
+            switch_to_blog( (int) $site->blog_id );
+
+            $hubs = get_posts( array(
+                'post_type'        => 'mobilization_hub',
+                'posts_per_page'   => -1,
+                'post_status'      => 'publish',
+                'suppress_filters' => false,
+            ) );
+
+            $site_name = get_bloginfo( 'name' );
+
+            foreach ( $hubs as $h ) {
+                $lat = get_post_meta( $h->ID, '_hub_lat', true );
+                $lng = get_post_meta( $h->ID, '_hub_lng', true );
+                if ( $lat && $lng ) {
+                    $type = get_post_meta( $h->ID, '_hub_type', true );
+                    $pins[] = array(
+                        'title'     => $h->post_title,
+                        'lat'       => (float) $lat,
+                        'lng'       => (float) $lng,
+                        'type'      => $type ? $type : 'confirmed',
+                        'meetup'    => get_post_meta( $h->ID, '_hub_meetup', true ),
+                        'date'      => get_post_meta( $h->ID, '_hub_next_date', true ),
+                        'chat'      => get_post_meta( $h->ID, '_hub_chat_url', true ),
+                        'site_name' => $site_name,
+                    );
+                }
+            }
+
+            restore_current_blog();
+        }
+    } else {
+        $hubs = get_posts( array(
+            'post_type'        => 'mobilization_hub',
+            'posts_per_page'   => -1,
+            'post_status'      => 'publish',
+            'suppress_filters' => false,
+        ) );
+
+        $site_name = get_bloginfo( 'name' );
+
+        foreach ( $hubs as $h ) {
+            $lat = get_post_meta( $h->ID, '_hub_lat', true );
+            $lng = get_post_meta( $h->ID, '_hub_lng', true );
+            if ( $lat && $lng ) {
+                $type = get_post_meta( $h->ID, '_hub_type', true );
+                $pins[] = array(
+                    'title'     => $h->post_title,
+                    'lat'       => (float) $lat,
+                    'lng'       => (float) $lng,
+                    'type'      => $type ? $type : 'confirmed',
+                    'meetup'    => get_post_meta( $h->ID, '_hub_meetup', true ),
+                    'date'      => get_post_meta( $h->ID, '_hub_next_date', true ),
+                    'chat'      => get_post_meta( $h->ID, '_hub_chat_url', true ),
+                    'site_name' => $site_name,
+                );
+            }
+        }
+    }
+
+    return $pins;
+}
+
 function july3_mod3_render_map( $atts ) {
-    $atts = shortcode_atts( array( 'mode' => 'full' ), $atts );
-    $is_teaser = ( $atts['mode'] === 'teaser' );
+    static $map_instance = 0;
+    $map_instance++;
+
+    $atts = shortcode_atts( array(
+        'mode'   => 'full',
+        'global' => false,
+    ), $atts );
+
+    $is_teaser = ( 'teaser' === $atts['mode'] );
+    $is_global = filter_var( $atts['global'], FILTER_VALIDATE_BOOLEAN );
 
     wp_enqueue_style( 'leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
     wp_enqueue_script( 'leaflet-js', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
 
-    $hubs = get_posts( array(
-        'post_type'      => 'mobilization_hub',
-        'posts_per_page' => -1,
-        'post_status'    => 'publish',
-    ) );
+    $pins = july3_mod3_get_hub_pins( $is_global );
 
-    $pins = array();
-    foreach ( $hubs as $h ) {
-        $lat = get_post_meta( $h->ID, '_hub_lat', true );
-        $lng = get_post_meta( $h->ID, '_hub_lng', true );
-        if ( $lat && $lng ) {
-            $type = get_post_meta( $h->ID, '_hub_type', true );
-            $pins[] = array(
-                'title'  => $h->post_title,
-                'lat'    => (float) $lat,
-                'lng'    => (float) $lng,
-                'type'   => $type ? $type : 'confirmed',
-                'meetup' => get_post_meta( $h->ID, '_hub_meetup', true ),
-                'date'   => get_post_meta( $h->ID, '_hub_next_date', true ),
-                'chat'   => get_post_meta( $h->ID, '_hub_chat_url', true ),
-            );
-        }
-    }
+    $map_wrapper_id = 'july3-map-wrapper-' . $map_instance;
+    $map_canvas_id  = 'july3-osm-map-' . $map_instance;
+    $map_height     = $is_teaser ? '330px' : '540px';
 
-    $map_height = $is_teaser ? '330px' : '540px';
     ob_start();
     ?>
-    <section id="map-preview" class="j3-container" style="padding:48px 24px;text-align:center;">
-        <div style="color:var(--j3-orange);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;"><?php esc_html_e( 'LOCAL ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES', '101-map-assemblies' ); ?></div>
+    <section id="<?php echo esc_attr( $map_wrapper_id ); ?>" class="j3-container july3-map-container" style="padding:48px 24px;text-align:center;">
+        <div style="color:var(--j3-orange);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;">
+            <?php echo $is_global ? esc_html__( 'NETWORK-WIDE ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES', '101-map-assemblies' ) : esc_html__( 'LOCAL ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES', '101-map-assemblies' ); ?>
+        </div>
         <h2 class="j3-poster-title" style="font-size:44px;margin:6px 0 8px;"><?php esc_html_e( 'THE GLOBAL ASSEMBLIES MAP', '101-map-assemblies' ); ?></h2>
         <div class="j3-brush" style="margin-bottom:20px;"><?php esc_html_e( 'Find a local assembly, town hall, or training near you', '101-map-assemblies' ); ?></div>
 
         <?php if ( ! $is_teaser ) : ?>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;justify-content:center;">
-                <button type="button" onclick="july3FilterMap('all')" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:var(--j3-espresso, #1c130e);color:#fff;font-weight:700;cursor:pointer;">
+                <button type="button" class="july3-filter-btn" data-filter="all" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:var(--j3-espresso, #1c130e);color:#fff;font-weight:700;cursor:pointer;">
                     <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ffffff;border:2px solid rgba(255,255,255,0.6);box-sizing:border-box;flex-shrink:0;"></span>
                     <?php printf( esc_html__( 'All Pins (%d)', '101-map-assemblies' ), count( $pins ) ); ?>
                 </button>
-                <button type="button" onclick="july3FilterMap('event')" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#f3e8ff;color:#6b21a8;font-weight:700;cursor:pointer;">
+                <button type="button" class="july3-filter-btn" data-filter="event" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#f3e8ff;color:#6b21a8;font-weight:700;cursor:pointer;">
                     <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8b5cf6;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
                     <?php esc_html_e( 'Talks, Town Halls &amp; Trainings', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" onclick="july3FilterMap('confirmed')" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#dcfce7;color:#166534;font-weight:700;cursor:pointer;">
+                <button type="button" class="july3-filter-btn" data-filter="confirmed" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#dcfce7;color:#166534;font-weight:700;cursor:pointer;">
                     <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#16a34a;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
                     <?php esc_html_e( 'Confirmed Assemblies', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" onclick="july3FilterMap('capital')" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#ffedd5;color:#c2410c;font-weight:700;cursor:pointer;">
+                <button type="button" class="july3-filter-btn" data-filter="capital" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#ffedd5;color:#c2410c;font-weight:700;cursor:pointer;">
                     <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#ea580c;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
                     <?php esc_html_e( 'July 3 Capital Convergences', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" onclick="july3FilterMap('prep')" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#fef3c7;color:#92400e;font-weight:700;cursor:pointer;">
+                <button type="button" class="july3-filter-btn" data-filter="prep" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#fef3c7;color:#92400e;font-weight:700;cursor:pointer;">
                     <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f59e0b;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
                     <?php esc_html_e( 'Preparation Meetings', '101-map-assemblies' ); ?>
                 </button>
             </div>
         <?php endif; ?>
 
-        <div id="july3-osm-map" style="height:<?php echo esc_attr( $map_height ); ?>;width:100%;border-radius:24px;box-shadow:0 25px 50px -12px rgba(28,19,14,0.18);overflow:hidden;text-align:left;"></div>
+        <div id="<?php echo esc_attr( $map_canvas_id ); ?>" style="height:<?php echo esc_attr( $map_height ); ?>;width:100%;border-radius:24px;box-shadow:0 25px 50px -12px rgba(28,19,14,0.18);overflow:hidden;text-align:left;"></div>
 
         <?php if ( $is_teaser ) : ?>
             <div style="margin-top:24px;">
@@ -156,44 +228,87 @@ function july3_mod3_render_map( $atts ) {
         <?php endif; ?>
     </section>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var map = L.map('july3-osm-map').setView([51.5, -1.5], <?php echo $is_teaser ? 4 : 5; ?>);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        var rawPins = <?php echo wp_json_encode( $pins ); ?>;
-        var detailsText = <?php echo wp_json_encode( __( 'Telegram →', '101-map-assemblies' ) ); ?>;
-        var markers = [];
-        window.july3FilterMap = function(filterType) {
-            markers.forEach(function(m) { map.removeLayer(m); });
-            markers = [];
-            rawPins.forEach(function(p) {
-                if (filterType !== 'all' && p.type !== filterType) return;
-                var colors = { capital: '#ea580c', confirmed: '#16a34a', prep: '#f59e0b', event: '#8b5cf6' };
-                var m = L.circleMarker([p.lat, p.lng], {
-                    radius: p.type === 'capital' ? 12 : 10,
-                    fillColor: colors[p.type] || '#ea580c',
-                    color: '#1c130e',
-                    weight: 2.5,
-                    fillOpacity: 0.95
-                }).addTo(map);
-                var html = '<div style="font-family:sans-serif;line-height:1.45;padding:4px;"><strong style="font-size:15px;">' + p.title + '</strong><br>';
-                if (p.meetup) html += '📍 ' + p.meetup + '<br>';
-                if (p.date) html += '🗓️ <strong>' + p.date + '</strong><br>';
-                if (p.chat) html += '<a href="' + p.chat + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;padding:6px 12px;background:#ea580c;color:#fff;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;">' + detailsText + '</a>';
-                html += '</div>';
-                m.bindPopup(html);
-                markers.push(m);
-            });
-        };
-        july3FilterMap('all');
-    });
+    (function() {
+        function initJuly3Map() {
+            var mapCanvas = document.getElementById(<?php echo wp_json_encode( $map_canvas_id ); ?>);
+            var wrapper = document.getElementById(<?php echo wp_json_encode( $map_wrapper_id ); ?>);
+            if (!mapCanvas || typeof L === 'undefined') {
+                return;
+            }
+
+            var map = L.map(mapCanvas).setView([51.5, -1.5], <?php echo $is_teaser ? 4 : 5; ?>);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var rawPins = <?php echo wp_json_encode( $pins ); ?>;
+            var detailsText = <?php echo wp_json_encode( __( 'Telegram →', '101-map-assemblies' ) ); ?>;
+            var markers = [];
+
+            function filterMap(filterType) {
+                markers.forEach(function(m) { map.removeLayer(m); });
+                markers = [];
+                rawPins.forEach(function(p) {
+                    if (filterType !== 'all' && p.type !== filterType) return;
+                    var colors = { capital: '#ea580c', confirmed: '#16a34a', prep: '#f59e0b', event: '#8b5cf6' };
+                    var m = L.circleMarker([p.lat, p.lng], {
+                        radius: p.type === 'capital' ? 12 : 10,
+                        fillColor: colors[p.type] || '#ea580c',
+                        color: '#1c130e',
+                        weight: 2.5,
+                        fillOpacity: 0.95
+                    }).addTo(map);
+                    var html = '<div style="font-family:sans-serif;line-height:1.45;padding:4px;"><strong style="font-size:15px;">' + p.title + '</strong><br>';
+                    if (p.meetup) html += '📍 ' + p.meetup + '<br>';
+                    if (p.date) html += '🗓️ <strong>' + p.date + '</strong><br>';
+                    if (p.chat) html += '<a href="' + p.chat + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;padding:6px 12px;background:#ea580c;color:#fff;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;">' + detailsText + '</a>';
+                    html += '</div>';
+                    m.bindPopup(html);
+                    markers.push(m);
+                });
+
+                if (markers.length > 0) {
+                    var group = new L.featureGroup(markers);
+                    map.fitBounds(group.getBounds().pad(0.1));
+                }
+            }
+
+            if (wrapper) {
+                var buttons = wrapper.querySelectorAll('.july3-filter-btn');
+                buttons.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var f = this.getAttribute('data-filter') || 'all';
+                        filterMap(f);
+                    });
+                });
+            }
+
+            filterMap('all');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initJuly3Map);
+        } else {
+            initJuly3Map();
+        }
+    })();
     </script>
     <?php
     return ob_get_clean();
 }
 add_shortcode( 'mobilization_map', 'july3_mod3_render_map' );
+
+/**
+ * Global map shortcodes for multisite networks.
+ */
+function july3_mod3_render_global_map( $atts ) {
+    $atts = (array) $atts;
+    $atts['global'] = true;
+    return july3_mod3_render_map( $atts );
+}
+add_shortcode( 'mobilization_map-global', 'july3_mod3_render_global_map' );
+add_shortcode( 'mobilization_map_global', 'july3_mod3_render_global_map' );
 
 function july3_mod3_render_calendar() {
     ob_start();
@@ -257,7 +372,7 @@ add_action( 'admin_enqueue_scripts', function( $hook ) {
 add_action( 'add_meta_boxes', function() {
     add_meta_box(
         'mobilization_hub_details',
-        __( '📍 Hub & Assembly Details (Map Settings)', '101-map-assemblies' ),
+        __( 'Hub & Assembly Details (Map Settings)', '101-map-assemblies' ),
         'july3_render_hub_meta_box',
         'mobilization_hub',
         'normal',
