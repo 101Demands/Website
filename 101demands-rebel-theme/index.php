@@ -19,8 +19,10 @@
 
 <footer class="j3-footer">
     <div class="j3-container">
-        <p style="color:#fff;font-family:'Anton',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px;">101 DEMANDS // JULY 3 GLOBAL MOBILIZATION</p>
-        <p>Hosted in Iceland on 1984 Hosting • 100% Free &amp; Open-Source Software (FOSS) • Zero Tracking Cookies</p>
+        <p style="color:var(--j3-yellow);font-family:var(--j3-font-display);font-size:32px;letter-spacing:1.5px;margin:0 0 8px;line-height:1;">
+            03<span style="color:#ffffff;">.</span>07 // <?php esc_html_e( '101 DEMANDS GLOBAL MOBILIZATION', '101demands-theme' ); ?>
+        </p>
+        <p style="color:#d4d4d4;margin:0;">Hosted in Iceland on 1984 Hosting • 100% Free &amp; Open-Source Software (FOSS) • Zero Tracking Cookies</p>
     </div>
 </footer>
 

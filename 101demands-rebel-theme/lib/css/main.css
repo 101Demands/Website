@@ -1,16 +1,28 @@
 :root {
-    --j3-espresso: #1c130e;
-    --j3-espresso-dark: #120c08;
-    --j3-orange: #ea580c;
-    --j3-amber: #f59e0b;
-    --j3-parchment: #fbf8f3;
-    --j3-sand: #f3ede2;
+    /* Core Brand Palette (Nov 2026 Direction) */
+    --j3-yellow: #faf829;
+    --j3-yellow-hover: #e5e310;
+    --j3-black: #000000;
+    --j3-offblack: #0d0d0d;
+    --j3-white: #ffffff;
+    --j3-paper-gray: #f4f4f0;
+
+    /* Typography Tokens: Knockout Featherweight (if licensed) -> Local Anton + Helvetica */
+    --j3-font-display: 'Knockout 48 A', 'Knockout 48 B', 'Knockout Featherweight', 'Anton', Impact, sans-serif;
+    --j3-font-body: 'Helvetica Neue', Helvetica, Arial, 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Backward-Compatible Aliases (Transforms Modules 1-4 automatically!) */
+    --j3-espresso: #000000;
+    --j3-espresso-dark: #000000;
+    --j3-orange: #faf829;
+    --j3-amber: #faf829;
+    --j3-parchment: #ffffff;
+    --j3-sand: #f4f4f0;
 }
 
 * {
     box-sizing: border-box;
 }
-
 
 @font-face {
     font-display: swap;
@@ -28,7 +40,6 @@
     src: url('../fonts/anton-v27-latin-regular.woff2') format('woff2');
 }
 
-
 @font-face {
     font-display: swap;
     font-family: 'Plus Jakarta Sans';
@@ -36,7 +47,7 @@
     font-weight: 400;
     src: url('../fonts/plus-jakarta-sans-v12-latin-regular.woff2') format('woff2');
 }
-/* plus-jakarta-sans-500 - latin */
+
 @font-face {
     font-display: swap;
     font-family: 'Plus Jakarta Sans';
@@ -75,13 +86,16 @@ html, body {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
-    background-color: var(--j3-parchment);
-    color: var(--j3-espresso);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--j3-white);
+    color: var(--j3-black);
+    font-family: var(--j3-font-body);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
 }
 
-
+body.admin-bar .j3-topbar {
+    top: 32px;
+}
 
 @media screen and (max-width: 782px) {
     body.admin-bar .j3-topbar {
@@ -89,91 +103,171 @@ html, body {
     }
 }
 
+/* ==========================================================================
+   GLOBAL TOPBAR (Pure #000000 Black + #faf829 Yellow + #ffffff White Sheet)
+   ========================================================================== */
 .j3-topbar {
     position: sticky;
     top: 0;
     z-index: 9999;
-    background: var(--j3-espresso-dark);
-    color: #ffffff;
-    padding: 12px 28px;
+    background: var(--j3-black);
+    color: var(--j3-white);
+    padding: 14px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    gap: 20px;
+    border-bottom: 3px solid var(--j3-yellow);
     width: 100%;
 }
 
+.j3-brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+}
+
+.j3-sheet-logo {
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+.j3-brand-lockup:hover .j3-sheet-logo {
+    transform: rotate(-3deg) scale(1.04);
+}
+
+.j3-brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 0.9;
+}
+
+.j3-brand-date {
+    font-family: var(--j3-font-display);
+    font-size: 40px;
+    color: var(--j3-yellow);
+    letter-spacing: 0.5px;
+    line-height: 0.9;
+}
+
+.j3-dot-white {
+    color: var(--j3-white);
+}
+
+.j3-brand-sub {
+    font-family: var(--j3-font-display);
+    font-size: 14px;
+    color: var(--j3-yellow);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+/* Keep legacy badge classes styled in case any plugin calls them */
 .j3-badge-orange {
-    background: var(--j3-orange);
-    color: #ffffff;
-    font-family: 'Anton', sans-serif;
+    background: var(--j3-yellow);
+    color: var(--j3-black);
+    font-family: var(--j3-font-display);
     font-size: 20px;
     letter-spacing: 0.8px;
     padding: 4px 12px;
-    border-radius: 6px;
+    border-radius: 2px;
     line-height: 1.2;
+    text-decoration: none;
 }
 
 .j3-badge-amber {
-    background: var(--j3-amber);
-    color: var(--j3-espresso-dark);
+    background: var(--j3-white);
+    color: var(--j3-black);
     font-weight: 800;
     font-size: 11px;
     letter-spacing: 1px;
     padding: 5px 10px;
-    border-radius: 999px;
+    border-radius: 2px;
     text-transform: uppercase;
+    text-decoration: none;
 }
 
 .j3-nav {
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: 26px;
     flex-wrap: wrap;
 }
 
 .j3-nav a {
-    color: #e7e5e4;
+    color: var(--j3-white);
+    font-family: var(--j3-font-display);
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
     transition: color 0.15s ease;
 }
 
 .j3-nav a:hover,
 .j3-nav a.current-menu-item {
-    color: var(--j3-amber);
+    color: var(--j3-yellow);
 }
 
 .j3-nav a.current-menu-item {
-    border-bottom: 2px solid var(--j3-amber);
+    border-bottom: 3px solid var(--j3-yellow);
     padding-bottom: 2px;
 }
 
-.j3-btn-orange {
+.j3-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.j3-global-pill {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: var(--j3-white);
+    font-family: var(--j3-font-display);
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+}
+
+/* High-Contrast Yellow Button with Black Typography (Fixes white-on-yellow!) */
+.j3-btn-orange,
+.j3-btn-orange:visited {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: var(--j3-orange);
-    color: #ffffff !important;
-    font-weight: 800;
-    font-size: 14px;
-    padding: 10px 20px;
-    border-radius: 999px;
+    justify-content: center;
+    gap: 8px;
+    background: var(--j3-yellow) !important;
+    color: var(--j3-black) !important;
+    font-family: var(--j3-font-display);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 2px;
     text-decoration: none;
-    border: none;
+    border: 2px solid var(--j3-black);
     cursor: pointer;
-    box-shadow: 0 8px 20px -4px rgba(234, 88, 12, 0.5);
-    transition: transform 0.15s ease, background 0.15s ease;
+    box-shadow: 4px 4px 0px var(--j3-white);
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
 }
 
 .j3-btn-orange:hover {
-    background: #d9460f;
-    transform: translateY(-1px);
+    background: var(--j3-white) !important;
+    color: var(--j3-black) !important;
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px var(--j3-yellow);
 }
 
+/* ==========================================================================
+   TYPOGRAPHY, CONTRAST FIXES & POSTER CONTAINERS
+   ========================================================================== */
 .j3-site-main {
     width: 100%;
     max-width: 100%;
@@ -187,26 +281,58 @@ html, body {
     padding: 0 24px;
 }
 
-.j3-poster-title {
-    font-family: 'Anton', sans-serif;
+.j3-poster-title,
+.j3-page-header h1,
+.vision-0307-wrap h2,
+.vision-0307-wrap h3 {
+    font-family: var(--j3-font-display) !important;
     text-transform: uppercase;
-    line-height: 1.02;
-    letter-spacing: 0.5px;
+    line-height: 0.98;
+    letter-spacing: 0.6px;
 }
 
+/* Replaces old cursive subtitle with crisp Helvetica uppercase tag */
 .j3-brush {
-    font-family: 'Caveat', cursive;
-    font-size: 28px;
-    color: var(--j3-orange);
-    line-height: 1.2;
+    font-family: var(--j3-font-body);
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--j3-black) !important;
+    background: var(--j3-yellow);
+    display: inline-block;
+    padding: 5px 14px;
+}
+
+/* Inner Page Header Banner (Black with #faf829 Yellow Title) */
+.j3-page-header {
+    background: var(--j3-black);
+    color: var(--j3-yellow);
+    padding: 48px 24px 36px;
+    border-bottom: 4px solid var(--j3-yellow);
+    text-align: center;
+}
+
+.j3-page-header h1 {
+    font-size: clamp(44px, 6vw, 72px);
+    color: var(--j3-yellow) !important;
+    margin: 0;
+}
+
+/* Fix White-on-White Heading in [mobilization_vision_0307] */
+.vision-0307-wrap > h3 {
+    color: var(--j3-black) !important;
+    background: var(--j3-yellow);
+    display: inline-block;
+    padding: 6px 16px;
 }
 
 .j3-footer {
-    background: var(--j3-espresso-dark);
-    color: #a8a29e;
+    background: var(--j3-black);
+    color: var(--j3-white);
     text-align: center;
-    padding: 56px 24px;
+    padding: 60px 24px;
     font-size: 14px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 4px solid var(--j3-yellow);
     width: 100%;
 }
