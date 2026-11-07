@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: 101 Demands — Module 6: Mobilization Registration Form "
 "1.0.0\n"
 "Report-Msgid-Bugs-To: contact@26septembre.org\n"
-"POT-Creation-Date: 2026-11-07 18:50+0000\n"
+"POT-Creation-Date: 2026-11-07 18:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,75 +18,75 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: 101-mobilization-form.php:80
+#: 101-mobilization-form.php:92
 msgid "Geocoding is disabled."
 msgstr ""
 
-#: 101-mobilization-form.php:89 101-mobilization-form.php:153
+#: 101-mobilization-form.php:101 101-mobilization-form.php:165
 msgid "Could not locate that postal code."
 msgstr ""
 
-#: 101-mobilization-form.php:165
+#: 101-mobilization-form.php:177
 msgid "Spam detected."
 msgstr ""
 
-#: 101-mobilization-form.php:169
+#: 101-mobilization-form.php:181
 msgid "Security check failed. Please refresh the page and try again."
 msgstr ""
 
-#: 101-mobilization-form.php:178
+#: 101-mobilization-form.php:190
 msgid "You just submitted the form. Please wait a moment and try again."
 msgstr ""
 
-#: 101-mobilization-form.php:198
+#: 101-mobilization-form.php:210
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: 101-mobilization-form.php:201
+#: 101-mobilization-form.php:213
 msgid "Please enter your town/city."
 msgstr ""
 
-#: 101-mobilization-form.php:204
+#: 101-mobilization-form.php:216
 msgid "Please enter a valid postal code."
 msgstr ""
 
-#: 101-mobilization-form.php:207
+#: 101-mobilization-form.php:219
 msgid "Please give the meeting place."
 msgstr ""
 
-#: 101-mobilization-form.php:212
+#: 101-mobilization-form.php:224
 msgid "Please choose a valid start date and time."
 msgstr ""
 
-#: 101-mobilization-form.php:215
+#: 101-mobilization-form.php:227
 msgid "Please tick the confirmation box to submit."
 msgstr ""
 
-#: 101-mobilization-form.php:234
+#: 101-mobilization-form.php:246
 msgid "Something went wrong while saving. Please try again."
 msgstr ""
 
-#: 101-mobilization-form.php:277 101-mobilization-form.php:371
+#: 101-mobilization-form.php:289 101-mobilization-form.php:383
 msgid ""
 "A confirmation email is on its way. Your point will appear on the map after "
 "a quick review by the team. If anything needs correcting, simply reply to "
 "that email."
 msgstr ""
 
-#: 101-mobilization-form.php:278
+#: 101-mobilization-form.php:290
 msgid ""
 "A confirmation email is on its way. The team will place your point on the "
 "map manually because we could not locate the address automatically."
 msgstr ""
 
 #. translators: %s: site name.
-#: 101-mobilization-form.php:309
+#: 101-mobilization-form.php:321
 #, php-format
 msgid "Your mobilization is registered — %s"
 msgstr ""
 
 #. translators: 1: town/city, 2: meeting place, 3: start time and date.
-#: 101-mobilization-form.php:315
+#: 101-mobilization-form.php:327
 #, php-format
 msgid ""
 "Hello,\n"
@@ -103,191 +103,209 @@ msgid ""
 "— %4$s"
 msgstr ""
 
-#: 101-mobilization-form.php:401
+#: 101-mobilization-form.php:413
 msgid "Your mobilization on the map"
 msgstr ""
 
-#: 101-mobilization-form.php:404
+#: 101-mobilization-form.php:416
 msgid "Thank you, your mobilization is registered!"
 msgstr ""
 
-#: 101-mobilization-form.php:406
+#: 101-mobilization-form.php:418
 msgid "View the map"
 msgstr ""
 
-#: 101-mobilization-form.php:435 101-mobilization-form.php:522
+#: 101-mobilization-form.php:447 101-mobilization-form.php:534
 msgid "Register my mobilization"
 msgstr ""
 
-#: 101-mobilization-form.php:437
+#: 101-mobilization-form.php:449
 msgid ""
 "Organising a march, a gathering or an assembly? Give the place, the day and "
 "the time: your point will appear on the map, and those looking for it near "
 "them will find you."
 msgstr ""
 
-#: 101-mobilization-form.php:439
+#: 101-mobilization-form.php:451
 msgid ""
 "Your contact details are never published: only the city, the meeting place "
 "and the time appear on the map."
 msgstr ""
 
-#: 101-mobilization-form.php:440
+#: 101-mobilization-form.php:452
 msgid "A confirmation email is sent to you."
 msgstr ""
 
-#: 101-mobilization-form.php:441
+#: 101-mobilization-form.php:453
 msgid "After a quick review by the team, your point appears on the map."
 msgstr ""
 
-#: 101-mobilization-form.php:452
+#: 101-mobilization-form.php:464
 msgid "Contacting you"
 msgstr ""
 
-#: 101-mobilization-form.php:455
+#: 101-mobilization-form.php:467
 msgid "Your email"
 msgstr ""
 
-#: 101-mobilization-form.php:457
+#: 101-mobilization-form.php:469
 msgid ""
 "Never published. This is how we will reach you if information is missing."
 msgstr ""
 
-#: 101-mobilization-form.php:461 101-mobilization-form.php:747
+#: 101-mobilization-form.php:473 101-mobilization-form.php:763
 msgid "Phone"
 msgstr ""
 
-#: 101-mobilization-form.php:463
+#: 101-mobilization-form.php:475
 msgid ""
 "Never published either. It is used on the day, when a call is faster than an "
 "email."
 msgstr ""
 
-#: 101-mobilization-form.php:467
+#: 101-mobilization-form.php:479
 msgid "Link to your local group (optional)"
 msgstr ""
 
-#: 101-mobilization-form.php:469
+#: 101-mobilization-form.php:481
 msgid ""
 "WhatsApp, Telegram, Signal, Matrix… the invite link to your discussion "
 "group, if you already have one."
 msgstr ""
 
-#: 101-mobilization-form.php:474
+#: 101-mobilization-form.php:486
 msgid "Where and when"
 msgstr ""
 
-#: 101-mobilization-form.php:478
+#: 101-mobilization-form.php:490
 msgid "Town/City"
 msgstr ""
 
-#: 101-mobilization-form.php:482 101-mobilization-form.php:754
+#: 101-mobilization-form.php:494 101-mobilization-form.php:770
 msgid "Postal code"
 msgstr ""
 
-#: 101-mobilization-form.php:484
+#: 101-mobilization-form.php:496
 msgid "Five digits: this is what places the point on the map."
 msgstr ""
 
-#: 101-mobilization-form.php:489
+#: 101-mobilization-form.php:501
 msgid "Meeting place"
 msgstr ""
 
-#: 101-mobilization-form.php:491
+#: 101-mobilization-form.php:503
 msgid ""
 "A precise point, not just the city name: a square, a forecourt, a station, a "
 "monument. This is what lets someone who does not know you join you."
 msgstr ""
 
-#: 101-mobilization-form.php:495
+#: 101-mobilization-form.php:507
 msgid "Start time & date"
 msgstr ""
 
-#: 101-mobilization-form.php:497
+#: 101-mobilization-form.php:509
 msgid "Pick the date and time of your event."
 msgstr ""
 
-#: 101-mobilization-form.php:502
+#: 101-mobilization-form.php:514
 msgid "The assembly, if you are holding one (optional)"
 msgstr ""
 
-#: 101-mobilization-form.php:503
+#: 101-mobilization-form.php:515
 msgid ""
 "The assembly that decides what comes next, after the march. Leave these two "
 "fields empty while nothing is decided: better to announce nothing than to "
 "announce wrongly."
 msgstr ""
 
-#: 101-mobilization-form.php:507
+#: 101-mobilization-form.php:519
 msgid "Assembly time"
 msgstr ""
 
-#: 101-mobilization-form.php:511
+#: 101-mobilization-form.php:523
 msgid "Assembly place"
 msgstr ""
 
-#: 101-mobilization-form.php:519
+#: 101-mobilization-form.php:531
 msgid ""
 "I agree to be contacted again about this mobilization, and for the city, the "
 "meeting place and the time to be published on the map."
 msgstr ""
 
-#: 101-mobilization-form.php:595
+#: 101-mobilization-form.php:607
 msgid "Network error. Please try again."
 msgstr ""
 
-#: 101-mobilization-form.php:666
+#: 101-mobilization-form.php:678
 msgid "Contact"
 msgstr ""
 
-#: 101-mobilization-form.php:667
+#: 101-mobilization-form.php:679
 msgid "Postal Code"
 msgstr ""
 
-#: 101-mobilization-form.php:668 101-mobilization-form.php:761
+#: 101-mobilization-form.php:680 101-mobilization-form.php:778
 msgid "Geocode"
 msgstr ""
 
-#: 101-mobilization-form.php:699 101-mobilization-form.php:763
+#: 101-mobilization-form.php:711 101-mobilization-form.php:780
 msgid "Located"
 msgstr ""
 
-#: 101-mobilization-form.php:701 101-mobilization-form.php:765
+#: 101-mobilization-form.php:713 101-mobilization-form.php:782
 msgid "Needs placement"
 msgstr ""
 
-#: 101-mobilization-form.php:713
+#: 101-mobilization-form.php:725
 msgid "Mobilization Registration Details"
 msgstr ""
 
-#: 101-mobilization-form.php:729
+#: 101-mobilization-form.php:741
 msgid "No registration details for this entry."
 msgstr ""
 
-#: 101-mobilization-form.php:744
+#: 101-mobilization-form.php:760
 msgid "Email"
 msgstr ""
 
-#: 101-mobilization-form.php:751
+#: 101-mobilization-form.php:767
 msgid "Group link"
 msgstr ""
 
-#: 101-mobilization-form.php:756
+#: 101-mobilization-form.php:771
+msgid "Country (geocoding)"
+msgstr ""
+
+#: 101-mobilization-form.php:773
 msgid "Assembly"
 msgstr ""
 
-#: 101-mobilization-form.php:758
+#: 101-mobilization-form.php:775
 msgid "Consent given"
 msgstr ""
 
-#: 101-mobilization-form.php:776
+#: 101-mobilization-form.php:793
 msgid "Re-run geocoding"
 msgstr ""
 
-#: 101-mobilization-form.php:778
+#: 101-mobilization-form.php:795
 msgid "Contact details are private and never published."
 msgstr ""
 
-#: 101-mobilization-form.php:790
+#: 101-mobilization-form.php:807
 msgid "You are not allowed to do that."
+msgstr ""
+
+#: 101-mobilization-form.php:857
+msgid "Geocoding succeeded — the map point was updated."
+msgstr ""
+
+#: 101-mobilization-form.php:859
+msgid "Geocoding did not run: the postal code or town/city is missing."
+msgstr ""
+
+#: 101-mobilization-form.php:861
+msgid ""
+"Geocoding failed — the postal code could not be located. Check the postal "
+"code and the country set for this site."
 msgstr ""

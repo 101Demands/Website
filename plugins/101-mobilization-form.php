@@ -65,6 +65,18 @@ function one01_mobform_site_country() {
 }
 
 /**
+ * Transient key used to cache a geocoding result.
+ *
+ * @param string $postal  Postal code.
+ * @param string $city    Town/city.
+ * @param string $country Country ISO code or name.
+ * @return string
+ */
+function one01_mobform_geocode_cache_key( $postal, $city, $country ) {
+    return 'one01_mobform_geo_' . md5( strtolower( $postal . '|' . $city . '|' . $country ) );
+}
+
+/**
  * Geocode a postal code + city through OpenStreetMap/Nominatim.
  *
  * Results (including misses) are cached in a transient to respect the
@@ -80,7 +92,7 @@ function one01_mobform_geocode( $postal, $city, $country ) {
         return new WP_Error( 'disabled', __( 'Geocoding is disabled.', '101-mobilization-form' ) );
     }
 
-    $cache_key = 'one01_mobform_geo_' . md5( strtolower( $postal . '|' . $city . '|' . $country ) );
+    $cache_key = one01_mobform_geocode_cache_key( $postal, $city, $country );
     $cached    = get_transient( $cache_key );
     if ( is_array( $cached ) ) {
         return $cached;
@@ -737,6 +749,10 @@ function one01_mobform_render_entry_meta_box( $post ) {
     $asm_place  = get_post_meta( $post->ID, '_entry_assembly_place', true );
     $geo_status = get_post_meta( $post->ID, '_entry_geocode_status', true );
     $geo_label  = get_post_meta( $post->ID, '_entry_geocode_label', true );
+    $country    = get_post_meta( $post->ID, '_entry_country', true );
+    if ( '' === $country ) {
+        $country = one01_mobform_site_country();
+    }
     $consent    = get_post_meta( $post->ID, '_entry_consent_timestamp', true );
 
     ?>
@@ -752,6 +768,7 @@ function one01_mobform_render_entry_meta_box( $post ) {
                 <a href="<?php echo esc_url( $group_url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $group_url ); ?></a></p>
         <?php endif; ?>
         <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Postal code', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( $postal ); ?></p>
+        <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Country (geocoding)', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( $country ? $country : '—' ); ?></p>
         <?php if ( $asm_time || $asm_place ) : ?>
             <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Assembly', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( trim( $asm_time . ' ' . $asm_place ) ); ?></p>
         <?php endif; ?>
@@ -799,19 +816,49 @@ add_action( 'admin_post_one01_mobform_regeocode', function () {
         $country = $defaults['country'];
     }
 
+    $result = 'missing';
     if ( $postal && $city ) {
+        // Drop any cached miss so a manual re-run always hits the network.
+        delete_transient( one01_mobform_geocode_cache_key( $postal, $city, $country ) );
+
         $coords = one01_mobform_geocode( $postal, $city, $country );
         if ( ! is_wp_error( $coords ) ) {
             update_post_meta( $post_id, '_hub_lat', $coords['lat'] );
             update_post_meta( $post_id, '_hub_lng', $coords['lng'] );
             update_post_meta( $post_id, '_entry_geocode_status', 'ok' );
             update_post_meta( $post_id, '_entry_geocode_label', $coords['label'] );
+            $result = 'ok';
         } else {
             update_post_meta( $post_id, '_entry_geocode_status', 'failed' );
+            $result = 'failed';
         }
     }
 
-    wp_safe_redirect( get_edit_post_link( $post_id, 'raw' ) );
+    wp_safe_redirect( add_query_arg( 'one01_geocode', $result, get_edit_post_link( $post_id, 'raw' ) ) );
     exit;
+} );
+
+/**
+ * Show the outcome of a manual "re-run geocoding" action.
+ */
+add_action( 'admin_notices', function () {
+    if ( ! isset( $_GET['one01_geocode'] ) ) {
+        return;
+    }
+
+    $post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
+    if ( ! $post_id || 'mobilization_hub' !== get_post_type( $post_id ) ) {
+        return;
+    }
+
+    $state = sanitize_text_field( wp_unslash( $_GET['one01_geocode'] ) );
+
+    if ( 'ok' === $state ) {
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Geocoding succeeded — the map point was updated.', '101-mobilization-form' ) . '</p></div>';
+    } elseif ( 'missing' === $state ) {
+        echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Geocoding did not run: the postal code or town/city is missing.', '101-mobilization-form' ) . '</p></div>';
+    } else {
+        echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Geocoding failed — the postal code could not be located. Check the postal code and the country set for this site.', '101-mobilization-form' ) . '</p></div>';
+    }
 } );
 // === END OF MODULE 6 ===
