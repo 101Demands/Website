@@ -35,22 +35,12 @@ add_action( 'init', function () {
  */
 function one01_mobform_defaults() {
     return apply_filters( 'one01_mobform_defaults', array(
-        'event_date' => '2026-11-14',          // Date the mobilization takes place (Y-m-d).
+        'event_date' => '2026-11-14',          // Default date prefilled in the picker (Y-m-d).
+        'event_time' => '14:00',               // Default time prefilled in the picker (H:i).
         'country'    => 'France',              // Country used to bias the geocoder.
         'hub_type'   => 'confirmed',           // Marker type once published (green by default).
         'throttle'   => 30,                    // Seconds a visitor must wait between submissions.
     ) );
-}
-
-/**
- * Normalise a submitted event date to Y-m-d.
- *
- * @param string $value Raw submitted value.
- * @return string
- */
-function one01_mobform_sanitize_date( $value ) {
-    $value = sanitize_text_field( (string) $value );
-    return preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ? $value : one01_mobform_defaults()['event_date'];
 }
 
 /**
@@ -164,8 +154,6 @@ function one01_mobform_handle_submit() {
     $start_time  = isset( $_POST['start_time'] ) ? sanitize_text_field( wp_unslash( $_POST['start_time'] ) ) : '';
     $asm_time    = isset( $_POST['assembly_time'] ) ? sanitize_text_field( wp_unslash( $_POST['assembly_time'] ) ) : '';
     $asm_place   = isset( $_POST['assembly_place'] ) ? sanitize_text_field( wp_unslash( $_POST['assembly_place'] ) ) : '';
-    $enfantiste  = isset( $_POST['enfantiste'] ) ? sanitize_text_field( wp_unslash( $_POST['enfantiste'] ) ) : 'no';
-    $event_date  = one01_mobform_sanitize_date( isset( $_POST['event_date'] ) ? wp_unslash( $_POST['event_date'] ) : '' );
     $consent     = ! empty( $_POST['gdpr_consent'] );
 
     // Required fields.
@@ -173,7 +161,7 @@ function one01_mobform_handle_submit() {
         wp_send_json_error( array( 'msg' => __( 'Please enter a valid email address.', '101-mobilization-form' ) ) );
     }
     if ( '' === $city ) {
-        wp_send_json_error( array( 'msg' => __( 'Please enter your city.', '101-mobilization-form' ) ) );
+        wp_send_json_error( array( 'msg' => __( 'Please enter your town/city.', '101-mobilization-form' ) ) );
     }
     if ( ! preg_match( '/^[A-Za-z0-9][A-Za-z0-9\- ]{1,11}$/', $postal_code ) ) {
         wp_send_json_error( array( 'msg' => __( 'Please enter a valid postal code.', '101-mobilization-form' ) ) );
@@ -181,11 +169,10 @@ function one01_mobform_handle_submit() {
     if ( '' === $meetup ) {
         wp_send_json_error( array( 'msg' => __( 'Please give the meeting place.', '101-mobilization-form' ) ) );
     }
-    if ( '' === $start_time ) {
-        wp_send_json_error( array( 'msg' => __( 'Please give the start time.', '101-mobilization-form' ) ) );
-    }
-    if ( ! in_array( $enfantiste, array( 'yes', 'working', 'no' ), true ) ) {
-        $enfantiste = 'no';
+    // The datetime-local picker submits "YYYY-MM-DDTHH:MM"; store it as "YYYY-MM-DD HH:MM".
+    $start_time = str_replace( 'T', ' ', $start_time );
+    if ( ! preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $start_time ) ) {
+        wp_send_json_error( array( 'msg' => __( 'Please choose a valid start date and time.', '101-mobilization-form' ) ) );
     }
     if ( ! $consent ) {
         wp_send_json_error( array( 'msg' => __( 'Please tick the confirmation box to submit.', '101-mobilization-form' ) ) );
@@ -213,7 +200,7 @@ function one01_mobform_handle_submit() {
     // Public map fields (consumed by [mobilization_map]).
     update_post_meta( $post_id, '_hub_type', in_array( $defaults['hub_type'], array( 'prep', 'confirmed', 'capital', 'event' ), true ) ? $defaults['hub_type'] : 'confirmed' );
     update_post_meta( $post_id, '_hub_meetup', $meetup );
-    update_post_meta( $post_id, '_hub_next_date', trim( $event_date . ' ' . $start_time ) );
+    update_post_meta( $post_id, '_hub_next_date', $start_time );
     if ( $group_url ) {
         update_post_meta( $post_id, '_hub_chat_url', $group_url );
     }
@@ -231,7 +218,6 @@ function one01_mobform_handle_submit() {
     update_post_meta( $post_id, '_entry_start_time', $start_time );
     update_post_meta( $post_id, '_entry_assembly_time', $asm_time );
     update_post_meta( $post_id, '_entry_assembly_place', $asm_place );
-    update_post_meta( $post_id, '_entry_enfantiste', $enfantiste );
     update_post_meta( $post_id, '_entry_consent_timestamp', current_time( 'mysql' ) );
     update_post_meta( $post_id, '_entry_geocode_status', $geo_ok ? 'ok' : 'failed' );
     update_post_meta( $post_id, '_entry_geocode_label', $geo_ok ? $coords['label'] : '' );
@@ -242,7 +228,7 @@ function one01_mobform_handle_submit() {
      * @param int   $post_id The pending mobilization_hub post ID.
      * @param array $entry   The submitted values.
      */
-    do_action( 'one01_mobform_after_submit', $post_id, compact( 'email', 'phone', 'group_url', 'city', 'postal_code', 'meetup', 'start_time', 'asm_time', 'asm_place', 'enfantiste', 'event_date' ) );
+    do_action( 'one01_mobform_after_submit', $post_id, compact( 'email', 'phone', 'group_url', 'city', 'postal_code', 'meetup', 'start_time', 'asm_time', 'asm_place' ) );
 
     // Optional acknowledgement email to the submitter.
     if ( apply_filters( 'one01_mobform_send_ack', true, $post_id, $email ) ) {
@@ -250,8 +236,17 @@ function one01_mobform_handle_submit() {
     }
 
     $msg = $geo_ok
-        ? __( 'Thank you, your mobilization is registered! A confirmation email is on its way. Your point will appear on the map after a quick review by the team.', '101-mobilization-form' )
-        : __( 'Thank you, your mobilization is registered! A confirmation email is on its way. The team will place your point on the map manually because we could not locate the address automatically.', '101-mobilization-form' );
+        ? __( 'A confirmation email is on its way. Your point will appear on the map after a quick review by the team. If anything needs correcting, simply reply to that email.', '101-mobilization-form' )
+        : __( 'A confirmation email is on its way. The team will place your point on the map manually because we could not locate the address automatically.', '101-mobilization-form' );
+
+    /**
+     * Filter the success message returned to the browser after a submission.
+     *
+     * @param string $msg     Success message.
+     * @param int    $post_id Pending hub post ID.
+     * @param bool   $geo_ok  Whether the address was geocoded automatically.
+     */
+    $msg = apply_filters( 'one01_mobform_success_message', $msg, $post_id, $geo_ok );
 
     wp_send_json_success( array(
         'msg'     => $msg,
@@ -278,8 +273,8 @@ function one01_mobform_send_acknowledgement( $post_id, $email, $city, $meetup, $
     );
 
     $body = sprintf(
-        /* translators: 1: city, 2: meeting place, 3: start time. */
-        __( "Hello,\n\nThank you for registering your mobilization.\n\nCity: %1\$s\nMeeting place: %2\$s\nStart time: %3\$s\n\nThe team will take a quick look, after which your point will appear on the map. If anything needs correcting, simply reply to this email.\n\n— %4\$s", '101-mobilization-form' ),
+        /* translators: 1: town/city, 2: meeting place, 3: start time and date. */
+        __( "Hello,\n\nThank you for registering your mobilization.\n\nTown/City: %1\$s\nMeeting place: %2\$s\nStart time & date: %3\$s\n\nThe team will take a quick look, after which your point will appear on the map. If anything needs correcting, simply reply to this email.\n\n— %4\$s", '101-mobilization-form' ),
         $city,
         $meetup,
         $start_time,
@@ -304,7 +299,6 @@ add_action( 'init', function () {
         '_entry_start_time',
         '_entry_assembly_time',
         '_entry_assembly_place',
-        '_entry_enfantiste',
         '_entry_consent_timestamp',
         '_entry_geocode_status',
         '_entry_geocode_label',
@@ -324,6 +318,33 @@ add_action( 'init', function () {
 } );
 
 /**
+ * Build the post-submit "thank you" panel (hidden until the form succeeds).
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string
+ */
+function one01_mobform_success_panel( $atts ) {
+    ob_start();
+    ?>
+    <div class="omf-success" hidden>
+        <div class="omf-success-check" aria-hidden="true">✓</div>
+        <h3 class="omf-success-title"><?php echo esc_html( $atts['success_heading'] ); ?></h3>
+        <p class="omf-success-text"><?php echo esc_html__( 'A confirmation email is on its way. Your point will appear on the map after a quick review by the team. If anything needs correcting, simply reply to that email.', '101-mobilization-form' ); ?></p>
+        <?php if ( ! empty( $atts['success_cta_url'] ) ) : ?>
+            <a class="omf-success-cta" href="<?php echo esc_url( $atts['success_cta_url'] ); ?>"><?php echo esc_html( $atts['success_cta_text'] ); ?></a>
+        <?php endif; ?>
+    </div>
+    <?php
+    /**
+     * Filter the rendered "thank you" panel so it can be fully customised.
+     *
+     * @param string $html Panel HTML.
+     * @param array  $atts Shortcode attributes.
+     */
+    return apply_filters( 'one01_mobform_success_html', ob_get_clean(), $atts );
+}
+
+/**
  * Render the registration form.
  *
  * @param array $atts Shortcode attributes.
@@ -335,10 +356,32 @@ function one01_mobform_render_form( $atts ) {
 
     $defaults = one01_mobform_defaults();
     $atts     = shortcode_atts( array(
-        'date'    => $defaults['event_date'],
-        'country' => $defaults['country'],
-        'heading' => __( 'Your mobilization on the map', '101-mobilization-form' ),
+        'date'             => $defaults['event_date'],
+        'time'             => $defaults['event_time'],
+        'country'          => $defaults['country'],
+        'heading'          => __( 'Your mobilization on the map', '101-mobilization-form' ),
+        'confetti'         => 'yes',
+        'success_url'      => '',
+        'success_heading'  => __( 'Thank you, your mobilization is registered!', '101-mobilization-form' ),
+        'success_cta_url'  => home_url( '/assemblies/' ),
+        'success_cta_text' => __( 'View the map', '101-mobilization-form' ),
     ), $atts, 'mobilization_registration_form' );
+
+    // Prefill the date picker only when both a valid date and time are supplied.
+    $default_datetime = '';
+    if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $atts['date'] ) && preg_match( '/^\d{2}:\d{2}$/', $atts['time'] ) ) {
+        $default_datetime = $atts['date'] . 'T' . $atts['time'];
+    }
+
+    // Confetti burst on success (js-confetti). Disable with confetti="no".
+    $confetti_enabled = filter_var( $atts['confetti'], FILTER_VALIDATE_BOOLEAN );
+    $confetti_url     = $confetti_enabled
+        ? apply_filters( 'one01_mobform_confetti_url', 'https://cdn.jsdelivr.net/npm/js-confetti@0.13.1/dist/js-confetti.browser.js' )
+        : '';
+    $confetti_options = apply_filters( 'one01_mobform_confetti_options', array(
+        'confettiNumber' => 220,
+        'emojis'         => array( '🎉', '📣', '✊', '🟡' ),
+    ) );
 
     $form_id  = 'one01-mobform-' . $instance;
     $nonce    = wp_create_nonce( ONE01_MOBFORM_NONCE );
@@ -348,7 +391,7 @@ function one01_mobform_render_form( $atts ) {
 
     ob_start();
     ?>
-    <section class="one01-mobform" id="<?php echo esc_attr( $form_id ); ?>">
+    <section class="one01-mobform" id="<?php echo esc_attr( $form_id ); ?>" data-success-url="<?php echo esc_url( $atts['success_url'] ); ?>" data-confetti-url="<?php echo esc_url( $confetti_url ); ?>" data-confetti-options="<?php echo esc_attr( wp_json_encode( $confetti_options ) ); ?>">
         <div class="omf-card">
             <div class="omf-eyebrow"><?php esc_html_e( 'Register my mobilization', '101-mobilization-form' ); ?></div>
             <h2 class="omf-title"><?php echo esc_html( $atts['heading'] ); ?></h2>
@@ -361,7 +404,6 @@ function one01_mobform_render_form( $atts ) {
 
             <form class="omf-form" onsubmit="return one01MobformSubmit(event, '<?php echo esc_js( $form_id ); ?>');">
                 <input type="hidden" name="nonce" value="<?php echo esc_attr( $nonce ); ?>">
-                <input type="hidden" name="event_date" value="<?php echo esc_attr( $atts['date'] ); ?>">
                 <div class="omf-hp" aria-hidden="true">
                     <input type="text" name="website_hp" tabindex="-1" autocomplete="off">
                 </div>
@@ -393,7 +435,7 @@ function one01_mobform_render_form( $atts ) {
 
                     <div class="omf-grid">
                         <div class="omf-field">
-                            <label for="<?php echo esc_attr( $form_id ); ?>-city"><?php esc_html_e( 'City', '101-mobilization-form' ); ?> <span class="omf-req">*</span></label>
+                            <label for="<?php echo esc_attr( $form_id ); ?>-city"><?php esc_html_e( 'Town/City', '101-mobilization-form' ); ?> <span class="omf-req">*</span></label>
                             <input type="text" id="<?php echo esc_attr( $form_id ); ?>-city" name="city" required autocomplete="address-level2">
                         </div>
                         <div class="omf-field">
@@ -410,9 +452,9 @@ function one01_mobform_render_form( $atts ) {
                     </div>
 
                     <div class="omf-field">
-                        <label for="<?php echo esc_attr( $form_id ); ?>-start"><?php esc_html_e( 'Start time', '101-mobilization-form' ); ?> <span class="omf-req">*</span></label>
-                        <input type="text" id="<?php echo esc_attr( $form_id ); ?>-start" name="start_time" required placeholder="<?php esc_attr_e( 'e.g. 2:00 pm', '101-mobilization-form' ); ?>">
-                        <small><?php esc_html_e( 'Give the time on the day, for example “2:00 pm”.', '101-mobilization-form' ); ?></small>
+                        <label for="<?php echo esc_attr( $form_id ); ?>-start"><?php esc_html_e( 'Start time & date', '101-mobilization-form' ); ?> <span class="omf-req">*</span></label>
+                        <input type="datetime-local" id="<?php echo esc_attr( $form_id ); ?>-start" name="start_time" required value="<?php echo esc_attr( $default_datetime ); ?>">
+                        <small><?php esc_html_e( 'Pick the date and time of your event.', '101-mobilization-form' ); ?></small>
                     </div>
                 </fieldset>
 
@@ -432,18 +474,6 @@ function one01_mobform_render_form( $atts ) {
                     </div>
                 </fieldset>
 
-                <fieldset class="omf-fieldset">
-                    <legend class="omf-legend"><?php esc_html_e( 'The childist collective', '101-mobilization-form' ); ?></legend>
-                    <div class="omf-field">
-                        <span class="omf-label"><?php esc_html_e( 'Do you have a joint action planned with the childist collective?', '101-mobilization-form' ); ?></span>
-                        <div class="omf-radios">
-                            <label><input type="radio" name="enfantiste" value="yes"> <?php esc_html_e( 'Yes', '101-mobilization-form' ); ?></label>
-                            <label><input type="radio" name="enfantiste" value="working"> <?php esc_html_e( 'Working on it', '101-mobilization-form' ); ?></label>
-                            <label><input type="radio" name="enfantiste" value="no" checked> <?php esc_html_e( 'No', '101-mobilization-form' ); ?></label>
-                        </div>
-                    </div>
-                </fieldset>
-
                 <label class="omf-consent">
                     <input type="checkbox" name="gdpr_consent" value="yes" required>
                     <span><?php esc_html_e( 'I agree to be contacted again about this mobilization, and for the city, the meeting place and the time to be published on the map.', '101-mobilization-form' ); ?></span>
@@ -452,6 +482,8 @@ function one01_mobform_render_form( $atts ) {
                 <button type="submit" class="omf-submit"><?php esc_html_e( 'Register my mobilization', '101-mobilization-form' ); ?></button>
                 <div class="omf-feedback" role="status" aria-live="polite" hidden></div>
             </form>
+
+            <?php echo one01_mobform_success_panel( $atts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
         </div>
     </section>
     <script>
@@ -464,6 +496,23 @@ function one01_mobform_render_form( $atts ) {
             var feedback = section.querySelector('.omf-feedback');
             var button = section.querySelector('.omf-submit');
 
+            function fireConfetti() {
+                var url = section.getAttribute('data-confetti-url');
+                if (!url) { return; }
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+                var opts = {};
+                try { opts = JSON.parse(section.getAttribute('data-confetti-options') || '{}'); } catch (err) {}
+                function run() {
+                    try { new window.JSConfetti().addConfetti(opts); } catch (err) {}
+                }
+                if (window.JSConfetti) { run(); return; }
+                var s = document.createElement('script');
+                s.src = url;
+                s.async = true;
+                s.onload = run;
+                document.head.appendChild(s);
+            }
+
             var fd = new FormData(form);
             fd.append('action', 'one01_submit_mobilization');
 
@@ -473,12 +522,30 @@ function one01_mobform_render_form( $atts ) {
             fetch(<?php echo wp_json_encode( $ajax_url ); ?>, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.json(); })
                 .then(function (res) {
-                    feedback.hidden = false;
-                    feedback.className = 'omf-feedback ' + (res.success ? 'is-success' : 'is-error');
-                    feedback.textContent = res && res.data && res.data.msg ? res.data.msg : '';
-                    if (res.success) {
+                    if (res && res.success) {
+                        var redirect = section.getAttribute('data-success-url');
+                        if (redirect) {
+                            window.location.href = redirect;
+                            return;
+                        }
                         form.reset();
+                        form.hidden = true;
+                        var panel = section.querySelector('.omf-success');
+                        var panelText = panel ? panel.querySelector('.omf-success-text') : null;
+                        if (panelText && res.data && res.data.msg) {
+                            panelText.textContent = res.data.msg;
+                        }
+                        if (panel) {
+                            panel.hidden = false;
+                            if (panel.scrollIntoView) {
+                                panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                        fireConfetti();
                     } else {
+                        feedback.hidden = false;
+                        feedback.className = 'omf-feedback is-error';
+                        feedback.textContent = res && res.data && res.data.msg ? res.data.msg : '';
                         button.disabled = false;
                     }
                 })
@@ -524,10 +591,8 @@ function one01_mobform_print_styles() {
     .one01-mobform .omf-field:last-child{margin-bottom:0;}
     .one01-mobform .omf-field label,.one01-mobform .omf-label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px;}
     .one01-mobform .omf-req{color:#dc2626;}
-    .one01-mobform .omf-field input[type=text],.one01-mobform .omf-field input[type=email],.one01-mobform .omf-field input[type=tel],.one01-mobform .omf-field input[type=url]{width:100%;padding:11px;border:2px solid var(--omf-black);background:var(--omf-white);box-sizing:border-box;font-size:15px;}
+    .one01-mobform .omf-field input[type=text],.one01-mobform .omf-field input[type=email],.one01-mobform .omf-field input[type=tel],.one01-mobform .omf-field input[type=url],.one01-mobform .omf-field input[type=datetime-local]{width:100%;padding:11px;border:2px solid var(--omf-black);background:var(--omf-white);box-sizing:border-box;font-size:15px;}
     .one01-mobform .omf-field small{display:block;margin-top:5px;font-size:12px;line-height:1.5;color:#555;}
-    .one01-mobform .omf-radios{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;}
-    .one01-mobform .omf-radios label{display:flex;align-items:center;gap:7px;font-weight:600;text-transform:none;letter-spacing:0;margin:0;cursor:pointer;}
     .one01-mobform .omf-consent{display:flex;gap:10px;align-items:flex-start;background:var(--omf-paper);border:2px solid var(--omf-black);padding:12px;font-size:12.5px;line-height:1.5;cursor:pointer;margin-bottom:18px;}
     .one01-mobform .omf-consent input{margin-top:3px;}
     .one01-mobform .omf-submit{width:100%;padding:15px;border:2px solid var(--omf-black);background:var(--omf-yellow);color:var(--omf-black);font-family:var(--j3-font-display,inherit);font-size:20px;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;box-shadow:4px 4px 0 var(--omf-black);transition:transform .1s ease;}
@@ -536,6 +601,12 @@ function one01_mobform_print_styles() {
     .one01-mobform .omf-feedback{margin-top:14px;padding:12px 14px;border:2px solid var(--omf-black);font-weight:700;font-size:14px;}
     .one01-mobform .omf-feedback.is-success{background:#dcfce7;color:#166534;}
     .one01-mobform .omf-feedback.is-error{background:#fef2f2;color:#b91c1c;}
+    .one01-mobform .omf-success{text-align:center;padding:8px 4px 4px;}
+    .one01-mobform .omf-success-check{width:76px;height:76px;margin:0 auto 22px;border-radius:50%;background:var(--omf-yellow);border:3px solid var(--omf-black);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;line-height:1;box-shadow:4px 4px 0 var(--omf-black);}
+    .one01-mobform .omf-success-title{font-family:var(--j3-font-display,inherit);font-size:clamp(24px,4vw,34px);line-height:1.05;text-transform:uppercase;margin:0 0 14px;}
+    .one01-mobform .omf-success-text{font-size:15px;line-height:1.65;margin:0 auto 24px;max-width:540px;color:#333;}
+    .one01-mobform .omf-success-cta{display:inline-block;padding:14px 28px;border:2px solid var(--omf-black);background:var(--omf-yellow);color:var(--omf-black);font-family:var(--j3-font-display,inherit);font-size:18px;text-transform:uppercase;letter-spacing:0.5px;text-decoration:none;box-shadow:4px 4px 0 var(--omf-black);transition:transform .1s ease;}
+    .one01-mobform .omf-success-cta:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--omf-black);}
     .one01-mobform .omf-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden;}
     </style>
     <?php
@@ -554,7 +625,6 @@ add_filter( 'manage_mobilization_hub_posts_columns', function ( $columns ) {
         if ( 'title' === $key ) {
             $new['omf_contact']  = __( 'Contact', '101-mobilization-form' );
             $new['omf_postal']   = __( 'Postal Code', '101-mobilization-form' );
-            $new['omf_enfant']   = __( 'Childist', '101-mobilization-form' );
             $new['omf_geocode']  = __( 'Geocode', '101-mobilization-form' );
         }
     }
@@ -583,15 +653,6 @@ add_action( 'manage_mobilization_hub_posts_custom_column', function ( $column, $
             break;
         case 'omf_postal':
             echo esc_html( get_post_meta( $post_id, '_entry_postal_code', true ) );
-            break;
-        case 'omf_enfant':
-            $map = array(
-                'yes'     => __( 'Yes', '101-mobilization-form' ),
-                'working' => __( 'Working on it', '101-mobilization-form' ),
-                'no'      => __( 'No', '101-mobilization-form' ),
-            );
-            $val = get_post_meta( $post_id, '_entry_enfantiste', true );
-            echo esc_html( isset( $map[ $val ] ) ? $map[ $val ] : '—' );
             break;
         case 'omf_geocode':
             if ( 'ok' === get_post_meta( $post_id, '_entry_geocode_status', true ) ) {
@@ -634,16 +695,10 @@ function one01_mobform_render_entry_meta_box( $post ) {
     $postal     = get_post_meta( $post->ID, '_entry_postal_code', true );
     $asm_time   = get_post_meta( $post->ID, '_entry_assembly_time', true );
     $asm_place  = get_post_meta( $post->ID, '_entry_assembly_place', true );
-    $enfantiste = get_post_meta( $post->ID, '_entry_enfantiste', true );
     $geo_status = get_post_meta( $post->ID, '_entry_geocode_status', true );
     $geo_label  = get_post_meta( $post->ID, '_entry_geocode_label', true );
     $consent    = get_post_meta( $post->ID, '_entry_consent_timestamp', true );
 
-    $enfant_map = array(
-        'yes'     => __( 'Yes', '101-mobilization-form' ),
-        'working' => __( 'Working on it', '101-mobilization-form' ),
-        'no'      => __( 'No', '101-mobilization-form' ),
-    );
     ?>
     <div style="font-size:13px;line-height:1.6;">
         <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Email', '101-mobilization-form' ); ?>:</strong><br>
@@ -660,7 +715,6 @@ function one01_mobform_render_entry_meta_box( $post ) {
         <?php if ( $asm_time || $asm_place ) : ?>
             <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Assembly', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( trim( $asm_time . ' ' . $asm_place ) ); ?></p>
         <?php endif; ?>
-        <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Childist collective', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( isset( $enfant_map[ $enfantiste ] ) ? $enfant_map[ $enfantiste ] : '—' ); ?></p>
         <p style="margin:0 0 6px;"><strong><?php esc_html_e( 'Consent given', '101-mobilization-form' ); ?>:</strong> <?php echo esc_html( $consent ? $consent : '—' ); ?></p>
 
         <p style="margin:8px 0 6px;">
