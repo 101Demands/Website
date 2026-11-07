@@ -380,7 +380,7 @@ function one01_mobform_render_form( $atts ) {
         : '';
     $confetti_options = apply_filters( 'one01_mobform_confetti_options', array(
         'confettiNumber' => 220,
-        'emojis'         => array( '🎉', '📣', '✊', '🟡' ),
+        'confettiColors' => array( '#000000', '#56666B', '#A8AF4A', '#C6E41B', '#FAF829' ),
     ) );
 
     $form_id  = 'one01-mobform-' . $instance;
