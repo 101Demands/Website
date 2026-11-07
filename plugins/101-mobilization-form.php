@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: 101 Demands — Module 4: Mobilization Registration Form
+ * Plugin Name: 101 Demands — Module 6: Mobilization Registration Form
  * Description: Public "register your mobilization" form. Renders [mobilization_registration_form] (alias [recenser_mobilisation]), geocodes the postal code via OpenStreetMap/Nominatim, and files a pending mobilization_hub post for team review before it appears on [mobilization_map].
  * Version:     1.0.0
  * Author:      101 Demands Global Tech Collective
@@ -716,4 +716,4 @@ add_action( 'admin_post_one01_mobform_regeocode', function () {
     wp_safe_redirect( get_edit_post_link( $post_id, 'raw' ) );
     exit;
 } );
-// === END OF MODULE 4 ===
+// === END OF MODULE 6 ===

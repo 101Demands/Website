@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the 101 Demands — Module 4: Mobilization Registration Form package.
+# This file is distributed under the same license as the 101 Demands — Module 6: Mobilization Registration Form package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 101 Demands — Module 4: Mobilization Registration Form "
+"Project-Id-Version: 101 Demands — Module 6: Mobilization Registration Form "
 "1.0.0\n"
 "Report-Msgid-Bugs-To: contact@26septembre.org\n"
 "POT-Creation-Date: 2026-11-07 17:53+0000\n"
