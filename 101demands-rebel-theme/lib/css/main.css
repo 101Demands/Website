@@ -337,92 +337,100 @@ body.admin-bar .j3-topbar {
     width: 100%;
 }
 /* ==========================================================================
-   CONTRAST & LEGACY INLINE COLOR OVERRIDES (Fixes Yellow-on-White & Brown)
+   COUNTER BAR, HERO BOX & BUTTON UNIFICATION
    ========================================================================== */
-
-/* 1. Top Counter Bar: Make the strip #faf829 Yellow with crisp #000000 Black numbers */
-.j3-site-main > div:first-child,
-div[style*="background:#f3ede2"] {
-    background: var(--j3-yellow) !important;
-    color: var(--j3-black) !important;
-    border-bottom: 3px solid var(--j3-black) !important;
-    font-weight: 700 !important;
+.j3-counter-bar {
+    position: relative;
+    z-index: 10;
+    margin-top: 0 !important;
+    background: var(--j3-yellow);
+    color: var(--j3-black);
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 3px solid var(--j3-black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-div[style*="background:#f3ede2"] strong {
+.j3-counter-num {
+    background: var(--j3-black);
+    color: var(--j3-yellow);
+    font-family: var(--j3-font-display);
+    font-size: 20px;
+    padding: 2px 9px;
+    margin-right: 4px;
+    border-radius: 2px;
+    display: inline-block;
+    line-height: 1.1;
+}
+
+.j3-hero-box {
+    max-width: 1120px;
+    margin: 0 auto;
+    background: var(--j3-black);
+    color: var(--j3-white);
+    border: 3px solid var(--j3-black);
+    border-radius: 2px;
+    padding: 56px 40px;
+    box-shadow: 12px 12px 0px var(--j3-yellow);
+    text-align: left;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    align-items: center;
+}
+
+.j3-hero-sheet {
+    background: var(--j3-white);
+    color: var(--j3-black);
+    border: 3px solid var(--j3-black);
+    border-radius: 2px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 8px 8px 0px var(--j3-yellow);
+}
+
+/* Secondary Outline Button — Matches Square Offset-Shadow Poster Style */
+.j3-btn-outline,
+.j3-btn-outline:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     background: var(--j3-black) !important;
     color: var(--j3-yellow) !important;
-    padding: 2px 8px !important;
-    border-radius: 2px !important;
-    margin-right: 3px !important;
+    font-family: var(--j3-font-display);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 2px;
+    text-decoration: none;
+    border: 2px solid var(--j3-yellow);
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--j3-yellow);
+    transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
 }
 
-/* 2. Fix Yellow-on-White Section Kickers (Give them a Black Highlight Box) */
+.j3-btn-outline:hover {
+    background: var(--j3-yellow) !important;
+    color: var(--j3-black) !important;
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px var(--j3-white);
+}
+
+/* Section kickers & Leaderboard numbers */
 .j3-container > div[style*="color:var(--j3-orange)"],
-section > div[style*="color:var(--j3-orange)"] {
+section > div[style*="color:var(--j3-orange)"],
+#leaderboard span.j3-poster-title[style*="color:var(--j3-orange)"] {
     background: var(--j3-black) !important;
     color: var(--j3-yellow) !important;
     display: inline-block !important;
     padding: 4px 12px !important;
-    margin-bottom: 8px !important;
-}
-
-/* 3. Fix Yellow-on-White #01 - #05 Leaderboard Numbers */
-#leaderboard span.j3-poster-title[style*="color:var(--j3-orange)"] {
-    background: var(--j3-black) !important;
-    color: var(--j3-yellow) !important;
-    padding: 4px 10px !important;
-    border-radius: 2px !important;
-    text-align: center !important;
-}
-
-/* 4. Homepage Hero Box: Convert Brown Gradient & Rainbow Text to Black, Yellow & White Sheet */
-#appeal > div {
-    background: var(--j3-black) !important;
-    border: 3px solid var(--j3-black) !important;
-    border-radius: 4px !important;
-    box-shadow: 12px 12px 0px var(--j3-yellow) !important;
-}
-
-/* Turn Left Inner Box into a Crisp White Sheet of Paper */
-#appeal > div > div:first-child {
-    background: var(--j3-white) !important;
-    color: var(--j3-black) !important;
-    border: 3px solid var(--j3-black) !important;
-    border-radius: 2px !important;
-    box-shadow: 8px 8px 0px var(--j3-yellow) !important;
-}
-
-#appeal > div > div:first-child div,
-#appeal > div > div:first-child p {
-    color: var(--j3-black) !important;
-}
-
-#appeal > div > div:first-child .j3-poster-title {
-    background: var(--j3-black) !important;
-    color: var(--j3-yellow) !important;
-    display: inline-block !important;
-    padding: 4px 16px !important;
-}
-
-/* Override rainbow spans in Hero to #faf829 Yellow */
-#appeal .j3-poster-title span {
-    color: var(--j3-yellow) !important;
-}
-
-/* 5. Appeal Signup & Coalition Sections */
-#sign-appeal {
-    background: var(--j3-black) !important;
-    border-top: 4px solid var(--j3-yellow) !important;
-    border-bottom: 4px solid var(--j3-yellow) !important;
-}
-
-#coalition {
-    background: var(--j3-paper-gray) !important;
-}
-
-#coalition a[style*="border:2px dashed"] {
-    background: var(--j3-black) !important;
-    color: var(--j3-yellow) !important;
-    border: 2px dashed var(--j3-yellow) !important;
 }
