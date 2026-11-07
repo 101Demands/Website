@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: 101 Demands — Module 3: Assemblies, Map & Calendar
- * Description: Powers [assemblies_intro], [mobilization_map] (supports mode="teaser" for homepage or full mode for /assemblies/), and [teamup_calendar].
- * Version:     1.2.3
+ * Description: Powers [assemblies_intro], [mobilization_map] (supports mode="teaser" for homepage or full mode for /assemblies/), [mobilization_map_global], and [teamup_calendar].
+ * Version:     1.3.0
  * Author:      101 Demands Global Tech Collective
  * Text Domain: 101-map-assemblies
  * Domain Path: /languages
@@ -26,6 +26,38 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Normalize legacy _hub_type values to the 5-stage momentum ladder:
+ * 1: seed     (#000000 Black — Telegram group exists, dormant)
+ * 2: chat     (#56666B Blue Slate — Active Telegram chat)
+ * 3: meetup   (#A8AF4A Lime Moss — Local planning meet-up in pub/space)
+ * 4: assembly (#D4E117 Electric Chartreuse — Confirmed Assembly planned)
+ * 5: capital  (#FAF829 Brand Yellow — July 3rd Capital / Major City Mobilisation)
+ */
+function july3_mod3_normalize_stage( $raw_type, $chat_url = '', $meetup = '', $date = '' ) {
+    $raw_type = strtolower( trim( (string) $raw_type ) );
+    if ( in_array( $raw_type, array( 'seed', 'chat', 'meetup', 'assembly', 'capital' ), true ) ) {
+        return $raw_type;
+    }
+    if ( 'capital' === $raw_type ) {
+        return 'capital';
+    }
+    if ( 'confirmed' === $raw_type ) {
+        return 'assembly';
+    }
+    if ( 'event' === $raw_type ) {
+        return 'meetup';
+    }
+    if ( 'prep' === $raw_type ) {
+        // If a 'prep' pin already has a physical meeting place or date, show as Stage 3 (meetup); otherwise Stage 1 (seed)
+        if ( ! empty( $meetup ) || ! empty( $date ) ) {
+            return 'meetup';
+        }
+        return 'seed';
+    }
+    return 'seed';
+}
+
+/**
  * Ensure the /assemblies/ WordPress Page takes priority over the CPT archive slug.
  */
 add_filter( 'register_post_type_args', function( $args, $post_type ) {
@@ -40,34 +72,34 @@ function july3_mod3_render_assemblies_intro() {
     ob_start();
     ?>
     <section class="j3-container" style="padding:56px 24px 24px;text-align:center;">
-        <div style="color:var(--j3-orange);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;"><?php esc_html_e( 'REAL DEMOCRACY IN ACTION', '101-map-assemblies' ); ?></div>
+        <div style="background:#000;color:var(--j3-yellow,#faf829);display:inline-block;padding:4px 12px;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;"><?php esc_html_e( 'REAL DEMOCRACY IN ACTION', '101-map-assemblies' ); ?></div>
         <h1 class="j3-poster-title" style="font-size:clamp(42px,5vw,58px);margin:6px 0 8px;"><?php esc_html_e( 'CITIZEN &amp; COMMUNITY ASSEMBLIES', '101-map-assemblies' ); ?></h1>
         <div class="j3-brush" style="margin-bottom:28px;"><?php esc_html_e( 'The key to unlocking real change across every demand', '101-map-assemblies' ); ?></div>
 
-        <div style="max-width:1040px;margin:0 auto;background:var(--j3-espresso);color:#fff;border-radius:26px;padding:44px 36px;text-align:left;box-shadow:0 25px 50px -12px rgba(28,19,14,0.3);">
+        <div style="max-width:1040px;margin:0 auto;background:#000000;color:#fff;border:3px solid #000000;border-radius:2px;padding:44px 36px;text-align:left;box-shadow:10px 10px 0px var(--j3-yellow,#faf829);">
             <p style="font-size:17px;line-height:1.7;color:#f5f5f4;margin:0 0 28px;max-width:860px;">
                 <?php echo wp_kses_post( __( 'For decades, vital reforms on climate, wealth inequality, housing, and peace have been blocked by short-term party politics and entrenched lobbying interests. <strong>Assemblies are how we break that deadlock.</strong> When ordinary people are given the time, independent evidence, and space to deliberate together, they consistently reach fair, courageous solutions that career politicians refuse to touch.', '101-map-assemblies' ) ); ?>
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
-                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:24px;">
-                    <div style="color:var(--j3-amber);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '01 // BEYOND GOVERNANCE FAILURES', '101-map-assemblies' ); ?></div>
+                <div style="background:#111111;border:2px solid #2b3336;border-radius:2px;padding:24px;">
+                    <div style="color:var(--j3-yellow,#faf829);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '01 // BEYOND GOVERNANCE FAILURES', '101-map-assemblies' ); ?></div>
                     <h3 style="margin:0 0 8px;font-size:19px;font-weight:800;color:#fff;"><?php esc_html_e( 'Power in the Hands of the People', '101-map-assemblies' ); ?></h3>
                     <p style="margin:0;font-size:14px;line-height:1.6;color:#d6d3d1;">
                         <?php esc_html_e( 'Instead of outsourcing our future to distant political classes and corporate lobbyists, assemblies put decision-making directly into the hands of everyday citizens and local communities.', '101-map-assemblies' ); ?>
                     </p>
                 </div>
 
-                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:24px;">
-                    <div style="color:var(--j3-amber);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '02 // INFORMED DELIBERATION', '101-map-assemblies' ); ?></div>
+                <div style="background:#111111;border:2px solid #2b3336;border-radius:2px;padding:24px;">
+                    <div style="color:var(--j3-yellow,#faf829);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '02 // INFORMED DELIBERATION', '101-map-assemblies' ); ?></div>
                     <h3 style="margin:0 0 8px;font-size:19px;font-weight:800;color:#fff;"><?php esc_html_e( 'The Key That Unlocks Every Demand', '101-map-assemblies' ); ?></h3>
                     <p style="margin:0;font-size:14px;line-height:1.6;color:#d6d3d1;">
                         <?php esc_html_e( 'Whether the issue is taxing extreme wealth, restoring nature, or fixing housing, assemblies bring communities and independent experts together to build mandates with real public legitimacy.', '101-map-assemblies' ); ?>
                     </p>
                 </div>
 
-                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:24px;">
-                    <div style="color:var(--j3-amber);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '03 // LOCAL TO GLOBAL', '101-map-assemblies' ); ?></div>
+                <div style="background:#111111;border:2px solid #2b3336;border-radius:2px;padding:24px;">
+                    <div style="color:var(--j3-yellow,#faf829);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><?php esc_html_e( '03 // LOCAL TO GLOBAL', '101-map-assemblies' ); ?></div>
                     <h3 style="margin:0 0 8px;font-size:19px;font-weight:800;color:#fff;"><?php esc_html_e( 'From Town Halls to July 3rd', '101-map-assemblies' ); ?></h3>
                     <p style="margin:0;font-size:14px;line-height:1.6;color:#d6d3d1;">
                         <?php esc_html_e( 'Local town halls and grassroots assemblies are meeting now to deliberate, compile local evidence reports, and build towards the mass capital-city convergences on July 3rd.', '101-map-assemblies' ); ?>
@@ -114,15 +146,20 @@ function july3_mod3_get_hub_pins( $is_global = false ) {
                 $lat = get_post_meta( $h->ID, '_hub_lat', true );
                 $lng = get_post_meta( $h->ID, '_hub_lng', true );
                 if ( $lat && $lng ) {
-                    $type = get_post_meta( $h->ID, '_hub_type', true );
+                    $raw_type = get_post_meta( $h->ID, '_hub_type', true );
+                    $meetup   = get_post_meta( $h->ID, '_hub_meetup', true );
+                    $date     = get_post_meta( $h->ID, '_hub_next_date', true );
+                    $chat     = get_post_meta( $h->ID, '_hub_chat_url', true );
+                    $stage    = july3_mod3_normalize_stage( $raw_type, $chat, $meetup, $date );
+
                     $pins[] = array(
                         'title'     => $h->post_title,
                         'lat'       => (float) $lat,
                         'lng'       => (float) $lng,
-                        'type'      => $type ? $type : 'confirmed',
-                        'meetup'    => get_post_meta( $h->ID, '_hub_meetup', true ),
-                        'date'      => get_post_meta( $h->ID, '_hub_next_date', true ),
-                        'chat'      => get_post_meta( $h->ID, '_hub_chat_url', true ),
+                        'type'      => $stage,
+                        'meetup'    => $meetup,
+                        'date'      => $date,
+                        'chat'      => $chat,
                         'site_name' => $site_name,
                     );
                 }
@@ -144,15 +181,20 @@ function july3_mod3_get_hub_pins( $is_global = false ) {
             $lat = get_post_meta( $h->ID, '_hub_lat', true );
             $lng = get_post_meta( $h->ID, '_hub_lng', true );
             if ( $lat && $lng ) {
-                $type = get_post_meta( $h->ID, '_hub_type', true );
+                $raw_type = get_post_meta( $h->ID, '_hub_type', true );
+                $meetup   = get_post_meta( $h->ID, '_hub_meetup', true );
+                $date     = get_post_meta( $h->ID, '_hub_next_date', true );
+                $chat     = get_post_meta( $h->ID, '_hub_chat_url', true );
+                $stage    = july3_mod3_normalize_stage( $raw_type, $chat, $meetup, $date );
+
                 $pins[] = array(
                     'title'     => $h->post_title,
                     'lat'       => (float) $lat,
                     'lng'       => (float) $lng,
-                    'type'      => $type ? $type : 'confirmed',
-                    'meetup'    => get_post_meta( $h->ID, '_hub_meetup', true ),
-                    'date'      => get_post_meta( $h->ID, '_hub_next_date', true ),
-                    'chat'      => get_post_meta( $h->ID, '_hub_chat_url', true ),
+                    'type'      => $stage,
+                    'meetup'    => $meetup,
+                    'date'      => $date,
+                    'chat'      => $chat,
                     'site_name' => $site_name,
                 );
             }
@@ -160,6 +202,28 @@ function july3_mod3_get_hub_pins( $is_global = false ) {
     }
 
     return $pins;
+}
+
+/**
+ * Determine default map center & zoom based on current subdomain or global flag.
+ */
+function july3_mod3_get_default_view( $is_global = false, $is_teaser = false ) {
+    if ( $is_global ) {
+        return array( 'lat' => 48.5, 'lng' => 6.0, 'zoom' => 4, 'fit_bounds' => true );
+    }
+
+    $host = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) ) : '';
+    if ( strpos( $host, 'uk.' ) === 0 ) {
+        return array( 'lat' => 54.2, 'lng' => -2.8, 'zoom' => $is_teaser ? 5 : 6, 'fit_bounds' => false );
+    }
+    if ( strpos( $host, 'fr.' ) === 0 ) {
+        return array( 'lat' => 46.6, 'lng' => 2.4, 'zoom' => $is_teaser ? 5 : 6, 'fit_bounds' => false );
+    }
+    if ( strpos( $host, 'de.' ) === 0 ) {
+        return array( 'lat' => 51.1, 'lng' => 10.4, 'zoom' => $is_teaser ? 5 : 6, 'fit_bounds' => false );
+    }
+
+    return array( 'lat' => 50.0, 'lng' => 4.0, 'zoom' => $is_teaser ? 4 : 5, 'fit_bounds' => true );
 }
 
 function july3_mod3_render_map( $atts ) {
@@ -174,55 +238,127 @@ function july3_mod3_render_map( $atts ) {
     $is_teaser = ( 'teaser' === $atts['mode'] );
     $is_global = filter_var( $atts['global'], FILTER_VALIDATE_BOOLEAN );
 
+    // On main global hub (101demands.org without country subdomain), default to global view
+    $host = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) ) : '';
+    if ( '101demands.org' === $host || 'www.101demands.org' === $host ) {
+        $is_global = true;
+    }
+
     wp_enqueue_style( 'leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
     wp_enqueue_script( 'leaflet-js', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
 
-    $pins = july3_mod3_get_hub_pins( $is_global );
-
+    $pins           = july3_mod3_get_hub_pins( $is_global );
+    $default_view   = july3_mod3_get_default_view( $is_global, $is_teaser );
+    $add_url        = home_url( '/add-your-gathering/' );
     $map_wrapper_id = 'july3-map-wrapper-' . $map_instance;
     $map_canvas_id  = 'july3-osm-map-' . $map_instance;
-    $map_height     = $is_teaser ? '330px' : '540px';
+    $map_height     = $is_teaser ? '440px' : '560px';
 
     ob_start();
     ?>
-    <section id="<?php echo esc_attr( $map_wrapper_id ); ?>" class="j3-container july3-map-container" style="padding:48px 24px;text-align:center;">
-        <div style="color:var(--j3-orange);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;">
+    <section id="<?php echo esc_attr( $map_wrapper_id ); ?>" class="j3-container july3-map-container" style="padding:32px 24px 48px;text-align:center;">
+        <div id="map-preview" style="background:#000;color:var(--j3-yellow,#faf829);display:inline-block;padding:4px 12px;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
             <?php echo $is_global ? esc_html__( 'NETWORK-WIDE ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES', '101-map-assemblies' ) : esc_html__( 'LOCAL ASSEMBLIES, TOWN HALLS &amp; CONVERGENCES', '101-map-assemblies' ); ?>
         </div>
-        <h2 class="j3-poster-title" style="font-size:44px;margin:6px 0 8px;"><?php esc_html_e( 'THE GLOBAL ASSEMBLIES MAP', '101-map-assemblies' ); ?></h2>
-        <div class="j3-brush" style="margin-bottom:20px;"><?php esc_html_e( 'Find a local assembly, town hall, or training near you', '101-map-assemblies' ); ?></div>
+        <h2 class="j3-poster-title" style="font-size:44px;margin:4px 0 6px;"><?php esc_html_e( 'THE ASSEMBLIES &amp; MOBILISATION MAP', '101-map-assemblies' ); ?></h2>
+        <div class="j3-brush" style="margin-bottom:18px;"><?php esc_html_e( 'Find your local group, join the Telegram chat, or put your town on the map', '101-map-assemblies' ); ?></div>
 
-        <?php if ( ! $is_teaser ) : ?>
-            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;justify-content:center;">
-                <button type="button" class="july3-filter-btn" data-filter="all" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:var(--j3-espresso, #1c130e);color:#fff;font-weight:700;cursor:pointer;">
-                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ffffff;border:2px solid rgba(255,255,255,0.6);box-sizing:border-box;flex-shrink:0;"></span>
+        <!-- Compact Filter & Action Bar Above the Map (Keeps Map High on Page) -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;justify-content:space-between;align-items:center;background:#f4f4f0;border:2px solid #000;padding:10px 14px;border-radius:2px;">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                <button type="button" class="july3-filter-btn is-active" data-filter="all" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:2px;border:2px solid #000;background:#000;color:var(--j3-yellow,#faf829);font-weight:800;font-size:12px;text-transform:uppercase;cursor:pointer;">
                     <?php printf( esc_html__( 'All Pins (%d)', '101-map-assemblies' ), count( $pins ) ); ?>
                 </button>
-                <button type="button" class="july3-filter-btn" data-filter="event" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#f3e8ff;color:#6b21a8;font-weight:700;cursor:pointer;">
-                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8b5cf6;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                    <?php esc_html_e( 'Talks, Town Halls &amp; Trainings', '101-map-assemblies' ); ?>
+                <button type="button" class="july3-filter-btn" data-filter="seed" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:2px;border:2px solid #000;background:#fff;color:#000;font-weight:700;font-size:12px;cursor:pointer;">
+                    <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#000000;border:2px solid #ffffff;box-shadow:0 0 0 1.5px #000;flex-shrink:0;"></span>
+                    <?php esc_html_e( '1. Telegram Group', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" class="july3-filter-btn" data-filter="confirmed" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#dcfce7;color:#166534;font-weight:700;cursor:pointer;">
-                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#16a34a;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                    <?php esc_html_e( 'Confirmed Assemblies', '101-map-assemblies' ); ?>
+                <button type="button" class="july3-filter-btn" data-filter="chat" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:2px;border:2px solid #000;background:#fff;color:#000;font-weight:700;font-size:12px;cursor:pointer;">
+                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#56666B;border:2px solid #000;flex-shrink:0;"></span>
+                    <?php esc_html_e( '2. Active Chat', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" class="july3-filter-btn" data-filter="capital" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#ffedd5;color:#c2410c;font-weight:700;cursor:pointer;">
-                    <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#ea580c;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                    <?php esc_html_e( 'July 3 Capital Convergences', '101-map-assemblies' ); ?>
+                <button type="button" class="july3-filter-btn" data-filter="meetup" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:2px;border:2px solid #000;background:#fff;color:#000;font-weight:700;font-size:12px;cursor:pointer;">
+                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#A8AF4A;border:2px solid #000;flex-shrink:0;"></span>
+                    <?php esc_html_e( '3. Local Meet-Up', '101-map-assemblies' ); ?>
                 </button>
-                <button type="button" class="july3-filter-btn" data-filter="prep" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:99px;border:none;background:#fef3c7;color:#92400e;font-weight:700;cursor:pointer;">
-                    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f59e0b;border:2px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                    <?php esc_html_e( 'Preparation Meetings', '101-map-assemblies' ); ?>
+                <button type="button" class="july3-filter-btn" data-filter="assembly" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:2px;border:2px solid #000;background:#fff;color:#000;font-weight:700;font-size:12px;cursor:pointer;">
+                    <span style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#D4E117;border:2px solid #000;flex-shrink:0;"></span>
+                    <?php esc_html_e( '4. Assembly Planned', '101-map-assemblies' ); ?>
+                </button>
+                <button type="button" class="july3-filter-btn" data-filter="capital" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:2px;border:2px solid #000;background:#fff;color:#000;font-weight:700;font-size:12px;cursor:pointer;">
+                    <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#FAF829;border:2.5px solid #000;flex-shrink:0;"></span>
+                    <?php esc_html_e( '5. July 3 Convergence', '101-map-assemblies' ); ?>
                 </button>
             </div>
-        <?php endif; ?>
 
-        <div id="<?php echo esc_attr( $map_canvas_id ); ?>" style="height:<?php echo esc_attr( $map_height ); ?>;width:100%;border-radius:24px;box-shadow:0 25px 50px -12px rgba(28,19,14,0.18);overflow:hidden;text-align:left;"></div>
+            <a href="<?php echo esc_url( $add_url ); ?>" class="j3-btn-orange" style="padding:8px 16px !important;font-size:16px !important;box-shadow:3px 3px 0px #000 !important;">
+                ➕ <?php esc_html_e( 'Add Your Gathering →', '101-map-assemblies' ); ?>
+            </a>
+        </div>
+
+        <!-- Map Canvas -->
+        <div id="<?php echo esc_attr( $map_canvas_id ); ?>" style="height:<?php echo esc_attr( $map_height ); ?>;width:100%;border:3px solid #000000;border-radius:2px;box-shadow:10px 10px 0px var(--j3-yellow,#faf829);overflow:hidden;text-align:left;background:#e5e7eb;"></div>
+
+        <!-- Single-Column Stacked Colour Key & Momentum Guide BELOW the Map -->
+        <div style="margin-top:24px;background:#ffffff;border:3px solid #000000;border-radius:2px;padding:24px 28px;text-align:left;box-shadow:8px 8px 0px #000000;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:16px;">
+                <div>
+                    <span style="background:#000;color:var(--j3-yellow,#faf829);font-size:11px;font-weight:800;letter-spacing:1.2px;padding:3px 8px;text-transform:uppercase;"><?php esc_html_e( 'MAP COLOUR KEY', '101-map-assemblies' ); ?></span>
+                    <h3 class="j3-poster-title" style="font-size:26px;margin:6px 0 0;color:#000;"><?php esc_html_e( '5 STAGES OF LOCAL MOMENTUM: TURN YOUR PIN FROM BLACK TO YELLOW', '101-map-assemblies' ); ?></h3>
+                </div>
+                <a href="<?php echo esc_url( $add_url ); ?>" class="j3-btn-orange" style="padding:8px 18px !important;font-size:16px !important;box-shadow:3px 3px 0px #000 !important;">
+                    📍 <?php esc_html_e( 'Register a Local Meet-Up or Assembly →', '101-map-assemblies' ); ?>
+                </a>
+            </div>
+
+            <!-- Single-Column Stacked Stages (1 to 5) -->
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:#f4f4f0;border:2px solid #000;">
+                    <span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#000000;border:2.5px solid #ffffff;box-shadow:0 0 0 2px #000000;flex-shrink:0;"></span>
+                    <div style="font-size:14px;line-height:1.4;color:#000;">
+                        <strong style="text-transform:uppercase;letter-spacing:0.4px;"><?php esc_html_e( 'Stage 1 — Seed Pin (Black):', '101-map-assemblies' ); ?></strong>
+                        <?php esc_html_e( 'A local Telegram group exists for this town, waiting for local citizens to join and spark the conversation.', '101-map-assemblies' ); ?>
+                    </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:#f4f4f0;border:2px solid #000;">
+                    <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:#56666B;border:2.5px solid #000000;flex-shrink:0;"></span>
+                    <div style="font-size:14px;line-height:1.4;color:#000;">
+                        <strong style="text-transform:uppercase;letter-spacing:0.4px;"><?php esc_html_e( 'Stage 2 — Active Telegram Chat (Blue Slate):', '101-map-assemblies' ); ?></strong>
+                        <?php esc_html_e( 'People are actively chatting in the local Telegram group and connecting with neighbours.', '101-map-assemblies' ); ?>
+                    </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:#f4f4f0;border:2px solid #000;">
+                    <span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#A8AF4A;border:2.5px solid #000000;flex-shrink:0;"></span>
+                    <div style="font-size:14px;line-height:1.4;color:#000;">
+                        <strong style="text-transform:uppercase;letter-spacing:0.4px;"><?php esc_html_e( 'Stage 3 — Local Planning Meet-Up (Lime Moss):', '101-map-assemblies' ); ?></strong>
+                        <?php esc_html_e( 'An informal local meet-up is arranged in a pub, cafe, or community room to plan an assembly together.', '101-map-assemblies' ); ?>
+                    </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:#f4f4f0;border:2px solid #000;">
+                    <span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:#D4E117;border:2.5px solid #000000;flex-shrink:0;"></span>
+                    <div style="font-size:14px;line-height:1.4;color:#000;">
+                        <strong style="text-transform:uppercase;letter-spacing:0.4px;"><?php esc_html_e( 'Stage 4 — Assembly Planned! (Electric Chartreuse):', '101-map-assemblies' ); ?></strong>
+                        <?php esc_html_e( 'A full community or citizens\' assembly is scheduled with a confirmed venue, date, and time.', '101-map-assemblies' ); ?>
+                    </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:#000000;color:#ffffff;border:2px solid #000;">
+                    <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#FAF829;border:3px solid #000000;box-shadow:0 0 0 2px #FAF829;flex-shrink:0;"></span>
+                    <div style="font-size:14px;line-height:1.4;">
+                        <strong style="color:var(--j3-yellow,#faf829);text-transform:uppercase;letter-spacing:0.4px;"><?php esc_html_e( 'Stage 5 — July 3rd Mass Mobilisation (Signal Yellow):', '101-map-assemblies' ); ?></strong>
+                        <?php esc_html_e( 'Capital & major city mass convergence on July 3rd bringing all local assemblies and movements together.', '101-map-assemblies' ); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <?php if ( $is_teaser ) : ?>
             <div style="margin-top:24px;">
-                <a href="<?php echo esc_url( home_url( '/assemblies/' ) ); ?>" class="j3-btn-orange" style="padding:14px 28px;font-size:16px;">
-                    <?php esc_html_e( '🗺️ Explore Assemblies, Full Map &amp; Key Dates →', '101-map-assemblies' ); ?>
+                <a href="<?php echo esc_url( home_url( '/assemblies/' ) ); ?>" class="j3-btn-orange">
+                    <?php esc_html_e( '🗺️ Explore Assemblies &amp; Full Page →', '101-map-assemblies' ); ?>
                 </a>
             </div>
         <?php endif; ?>
@@ -236,41 +372,65 @@ function july3_mod3_render_map( $atts ) {
                 return;
             }
 
-            var map = L.map(mapCanvas).setView([51.5, -1.5], <?php echo $is_teaser ? 4 : 5; ?>);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var defaultView = <?php echo wp_json_encode( $default_view ); ?>;
+            var map = L.map(mapCanvas).setView([defaultView.lat, defaultView.lng], defaultView.zoom);
+
+            // Clean architectural greyscale tiles (CartoDB Positron) so the Black-to-Yellow palette pops cleanly
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
+                subdomains: 'abcd',
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(map);
 
             var rawPins = <?php echo wp_json_encode( $pins ); ?>;
-            var detailsText = <?php echo wp_json_encode( __( 'Telegram →', '101-map-assemblies' ) ); ?>;
+            var detailsText = <?php echo wp_json_encode( __( 'Join Telegram Group →', '101-map-assemblies' ) ); ?>;
+            var addEventText = <?php echo wp_json_encode( __( '+ Organising an event here? Add details →', '101-map-assemblies' ) ); ?>;
+            var addUrl = <?php echo wp_json_encode( esc_url( $add_url ) ); ?>;
+
+            var stageConfig = {
+                seed:     { fill: '#000000', stroke: '#ffffff', radius: 7,  weight: 2.5, label: <?php echo wp_json_encode( __( 'Stage 1: Local Telegram Group', '101-map-assemblies' ) ); ?> },
+                chat:     { fill: '#56666B', stroke: '#000000', radius: 8,  weight: 2.5, label: <?php echo wp_json_encode( __( 'Stage 2: Active Telegram Chat', '101-map-assemblies' ) ); ?> },
+                meetup:   { fill: '#A8AF4A', stroke: '#000000', radius: 10, weight: 2.5, label: <?php echo wp_json_encode( __( 'Stage 3: Local Planning Meet-Up', '101-map-assemblies' ) ); ?> },
+                assembly: { fill: '#D4E117', stroke: '#000000', radius: 11, weight: 2.5, label: <?php echo wp_json_encode( __( 'Stage 4: Confirmed Assembly', '101-map-assemblies' ) ); ?> },
+                capital:  { fill: '#FAF829', stroke: '#000000', radius: 14, weight: 3.5, label: <?php echo wp_json_encode( __( 'Stage 5: July 3 Convergence', '101-map-assemblies' ) ); ?> }
+            };
+
             var markers = [];
 
-            function filterMap(filterType) {
+            function filterMap(filterType, isInitial) {
                 markers.forEach(function(m) { map.removeLayer(m); });
                 markers = [];
                 rawPins.forEach(function(p) {
-                    if (filterType !== 'all' && p.type !== filterType) return;
-                    var colors = { capital: '#ea580c', confirmed: '#16a34a', prep: '#f59e0b', event: '#8b5cf6' };
+                    var st = stageConfig[p.type] ? p.type : 'seed';
+                    if (filterType !== 'all' && st !== filterType) return;
+                    var cfg = stageConfig[st];
+
                     var m = L.circleMarker([p.lat, p.lng], {
-                        radius: p.type === 'capital' ? 12 : 10,
-                        fillColor: colors[p.type] || '#ea580c',
-                        color: '#1c130e',
-                        weight: 2.5,
-                        fillOpacity: 0.95
+                        radius: cfg.radius,
+                        fillColor: cfg.fill,
+                        color: cfg.stroke,
+                        weight: cfg.weight,
+                        fillOpacity: 0.96
                     }).addTo(map);
-                    var html = '<div style="font-family:sans-serif;line-height:1.45;padding:4px;"><strong style="font-size:15px;">' + p.title + '</strong><br>';
-                    if (p.meetup) html += '📍 ' + p.meetup + '<br>';
-                    if (p.date) html += '🗓️ <strong>' + p.date + '</strong><br>';
-                    if (p.chat) html += '<a href="' + p.chat + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;padding:6px 12px;background:#ea580c;color:#fff;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;">' + detailsText + '</a>';
+
+                    var html = '<div style="font-family:Helvetica,Arial,sans-serif;line-height:1.45;padding:4px;min-width:210px;color:#000;">';
+                    html += '<div style="display:inline-block;background:#000;color:#faf829;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;padding:2px 7px;margin-bottom:6px;">' + cfg.label + '</div>';
+                    html += '<div style="font-size:17px;font-weight:800;margin-bottom:6px;">' + p.title + '</div>';
+                    if (p.meetup) html += '<div style="font-size:13px;margin-bottom:4px;">📍 ' + p.meetup + '</div>';
+                    if (p.date) html += '<div style="font-size:13px;margin-bottom:6px;">🗓️ <strong>' + p.date + '</strong></div>';
+                    if (p.chat) {
+                        html += '<a href="' + p.chat + '" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:8px;padding:8px 12px;background:#faf829;color:#000;border:2px solid #000;text-decoration:none;font-size:12px;font-weight:800;text-transform:uppercase;box-shadow:2px 2px 0 #000;">✈️ ' + detailsText + '</a>';
+                    }
+                    html += '<a href="' + addUrl + '" style="display:block;margin-top:8px;font-size:11px;color:#000;text-decoration:underline;font-weight:700;">' + addEventText + '</a>';
                     html += '</div>';
+
                     m.bindPopup(html);
                     markers.push(m);
                 });
 
-                if (markers.length > 0) {
+                if (markers.length > 0 && (!isInitial || defaultView.fit_bounds)) {
                     var group = new L.featureGroup(markers);
-                    map.fitBounds(group.getBounds().pad(0.1));
+                    map.fitBounds(group.getBounds().pad(0.12));
                 }
             }
 
@@ -278,13 +438,19 @@ function july3_mod3_render_map( $atts ) {
                 var buttons = wrapper.querySelectorAll('.july3-filter-btn');
                 buttons.forEach(function(btn) {
                     btn.addEventListener('click', function() {
+                        buttons.forEach(function(b) {
+                            b.style.background = '#ffffff';
+                            b.style.color = '#000000';
+                        });
+                        this.style.background = '#000000';
+                        this.style.color = '#faf829';
                         var f = this.getAttribute('data-filter') || 'all';
-                        filterMap(f);
+                        filterMap(f, false);
                     });
                 });
             }
 
-            filterMap('all');
+            filterMap('all', true);
         }
 
         if (document.readyState === 'loading') {
@@ -314,9 +480,9 @@ function july3_mod3_render_calendar() {
     ob_start();
     ?>
     <section id="calendar" class="j3-container" style="padding:32px 24px 64px;text-align:center;">
-        <div style="color:var(--j3-orange);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;"><?php esc_html_e( 'KEY DATES &amp; REGIONAL GATHERINGS', '101-map-assemblies' ); ?></div>
+        <div style="background:#000;color:var(--j3-yellow,#faf829);display:inline-block;padding:4px 12px;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;"><?php esc_html_e( 'KEY DATES &amp; REGIONAL GATHERINGS', '101-map-assemblies' ); ?></div>
         <h2 class="j3-poster-title" style="font-size:44px;margin:6px 0 20px;"><?php esc_html_e( 'THE MOBILIZATION CALENDAR', '101-map-assemblies' ); ?></h2>
-        <div style="border-radius:24px;overflow:hidden;box-shadow:0 20px 45px -12px rgba(28,19,14,0.16);background:#fff;"><iframe src="https://teamup.com/kswvbpogo3pf6txkut?showProfileAndInfo=0&showSidepanel=1&showViewSelector=1&showMenu=1" style="width:100%;height:600px;border:none;" loading="lazy"></iframe></div>
+        <div style="border:3px solid #000;border-radius:2px;overflow:hidden;box-shadow:10px 10px 0px var(--j3-yellow,#faf829);background:#fff;"><iframe src="https://teamup.com/kswvbpogo3pf6txkut?showProfileAndInfo=0&showSidepanel=1&showViewSelector=1&showMenu=1" style="width:100%;height:600px;border:none;" loading="lazy"></iframe></div>
     </section>
     <?php
     return ob_get_clean();
@@ -388,10 +554,11 @@ function july3_render_hub_meta_box( $post ) {
 
     $lat       = get_post_meta( $post->ID, '_hub_lat', true );
     $lng       = get_post_meta( $post->ID, '_hub_lng', true );
-    $type      = get_post_meta( $post->ID, '_hub_type', true ) ?: 'confirmed';
+    $raw_type  = get_post_meta( $post->ID, '_hub_type', true ) ?: 'seed';
     $meetup    = get_post_meta( $post->ID, '_hub_meetup', true );
     $next_date = get_post_meta( $post->ID, '_hub_next_date', true );
     $chat_url  = get_post_meta( $post->ID, '_hub_chat_url', true );
+    $type      = july3_mod3_normalize_stage( $raw_type, $chat_url, $meetup, $next_date );
     ?>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 0;">
         <div>
@@ -407,27 +574,32 @@ function july3_render_hub_meta_box( $post ) {
     </div>
 
     <div style="margin-top:16px;">
-        <label style="font-weight:700;display:block;margin-bottom:8px;"><?php esc_html_e( 'Assembly Type / Marker Color', '101-map-assemblies' ); ?></label>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;max-width:900px;">
-            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;">
-                <input type="radio" name="_hub_type" value="confirmed" <?php checked( $type, 'confirmed' ); ?> style="margin:0;" />
-                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#16a34a;border:2.5px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Confirmed Assembly (Green)', '101-map-assemblies' ); ?></span>
+        <label style="font-weight:700;display:block;margin-bottom:8px;"><?php esc_html_e( '5-Stage Momentum Level / Marker Color', '101-map-assemblies' ); ?></label>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:680px;">
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">
+                <input type="radio" name="_hub_type" value="seed" <?php checked( $type, 'seed' ); ?> style="margin:0;" />
+                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#000000;border:2px solid #fff;box-shadow:0 0 0 1.5px #000;flex-shrink:0;"></span>
+                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Stage 1 — Seed Pin: Telegram Group Exists (#000000 Black)', '101-map-assemblies' ); ?></span>
             </label>
-            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;">
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">
+                <input type="radio" name="_hub_type" value="chat" <?php checked( $type, 'chat' ); ?> style="margin:0;" />
+                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#56666B;border:2px solid #000;flex-shrink:0;"></span>
+                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Stage 2 — Active Telegram Chat (#56666B Blue Slate)', '101-map-assemblies' ); ?></span>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">
+                <input type="radio" name="_hub_type" value="meetup" <?php checked( $type, 'meetup' ); ?> style="margin:0;" />
+                <span style="display:inline-block;width:15px;height:15px;border-radius:50%;background:#A8AF4A;border:2px solid #000;flex-shrink:0;"></span>
+                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Stage 3 — Local Planning Meet-Up in Pub/Space (#A8AF4A Lime Moss)', '101-map-assemblies' ); ?></span>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">
+                <input type="radio" name="_hub_type" value="assembly" <?php checked( $type, 'assembly' ); ?> style="margin:0;" />
+                <span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#D4E117;border:2px solid #000;flex-shrink:0;"></span>
+                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Stage 4 — Confirmed Assembly Planned (#D4E117 Electric Chartreuse)', '101-map-assemblies' ); ?></span>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">
                 <input type="radio" name="_hub_type" value="capital" <?php checked( $type, 'capital' ); ?> style="margin:0;" />
-                <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:#ea580c;border:2.5px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'July 3 Capital Convergence (Orange / Large)', '101-map-assemblies' ); ?></span>
-            </label>
-            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;">
-                <input type="radio" name="_hub_type" value="event" <?php checked( $type, 'event' ); ?> style="margin:0;" />
-                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#8b5cf6;border:2.5px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Talk, Town Hall &amp; Training (Purple)', '101-map-assemblies' ); ?></span>
-            </label>
-            <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;">
-                <input type="radio" name="_hub_type" value="prep" <?php checked( $type, 'prep' ); ?> style="margin:0;" />
-                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#f59e0b;border:2.5px solid #1c130e;box-sizing:border-box;flex-shrink:0;"></span>
-                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Preparation Meeting (Yellow)', '101-map-assemblies' ); ?></span>
+                <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:#FAF829;border:2.5px solid #000;flex-shrink:0;"></span>
+                <span style="font-weight:600;color:#0f172a;font-size:13.5px;"><?php esc_html_e( 'Stage 5 — July 3rd Capital / Major City Mobilisation (#FAF829 Yellow)', '101-map-assemblies' ); ?></span>
             </label>
         </div>
     </div>
