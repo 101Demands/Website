@@ -80,12 +80,18 @@
     src: url('../fonts/plus-jakarta-sans-v12-latin-800.woff2') format('woff2');
 }
 
-html, body {
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+body {
     margin: 0;
     padding: 0;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
     background-color: var(--j3-white);
     color: var(--j3-black);
     font-family: var(--j3-font-body);
@@ -102,7 +108,6 @@ body.admin-bar .j3-topbar {
         top: 46px;
     }
 }
-
 /* ==========================================================================
    GLOBAL TOPBAR (Pure #000000 Black + #faf829 Yellow + #ffffff White Sheet)
    ========================================================================== */
