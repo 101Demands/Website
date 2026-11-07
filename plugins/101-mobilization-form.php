@@ -37,10 +37,31 @@ function one01_mobform_defaults() {
     return apply_filters( 'one01_mobform_defaults', array(
         'event_date' => '2026-11-14',          // Default date prefilled in the picker (Y-m-d).
         'event_time' => '14:00',               // Default time prefilled in the picker (H:i).
-        'country'    => 'France',              // Country used to bias the geocoder.
+        'country'    => one01_mobform_site_country(), // ISO code or name used to bias the geocoder.
         'hub_type'   => 'confirmed',           // Marker type once published (green by default).
         'throttle'   => 30,                    // Seconds a visitor must wait between submissions.
     ) );
+}
+
+/**
+ * Country used to bias geocoding for the current site.
+ *
+ * On a multisite network each subsite resolves its own country from its locale
+ * (en_GB -> GB, de_DE -> DE, fr_FR -> FR), so no per-site setup is required.
+ * Override per site with the "one01_mobform_country" option, or globally with the
+ * "one01_mobform_country" filter. Accepts an ISO 3166-1 alpha-2 code or a country name.
+ *
+ * @return string
+ */
+function one01_mobform_site_country() {
+    $country = get_option( 'one01_mobform_country' );
+    if ( ! $country ) {
+        $locale = determine_locale();
+        if ( preg_match( '/^[a-z]{2,3}[_-]([A-Za-z]{2})/', $locale, $m ) ) {
+            $country = strtoupper( $m[1] );
+        }
+    }
+    return trim( (string) apply_filters( 'one01_mobform_country', $country ) );
 }
 
 /**
@@ -51,7 +72,7 @@ function one01_mobform_defaults() {
  *
  * @param string $postal  Postal code.
  * @param string $city    City name.
- * @param string $country Country name used to bias the lookup.
+ * @param string $country Country ISO code or name used to bias the lookup.
  * @return array|WP_Error Array with lat/lng/label on success, WP_Error otherwise.
  */
 function one01_mobform_geocode( $postal, $city, $country ) {
@@ -65,7 +86,7 @@ function one01_mobform_geocode( $postal, $city, $country ) {
         return $cached;
     }
     if ( 'not-found' === $cached ) {
-        return new WP_Error( 'not_found', __( 'Could not locate that postal code and city.', '101-mobilization-form' ) );
+        return new WP_Error( 'not_found', __( 'Could not locate that postal code.', '101-mobilization-form' ) );
     }
 
     $endpoint = 'https://nominatim.openstreetmap.org/search';
@@ -92,10 +113,22 @@ function one01_mobform_geocode( $postal, $city, $country ) {
         $base_args['email'] = $email;
     }
 
-    // Prefer the structured lookup, then fall back to a free-text query.
+    // Bias the lookup by country: a 2-letter value is treated as an ISO code
+    // (Nominatim "countrycodes"), anything else as a country name ("country").
+    $country_args = array();
+    $country_name = '';
+    if ( preg_match( '/^[A-Za-z]{2}$/', $country ) ) {
+        $country_args['countrycodes'] = strtolower( $country );
+    } elseif ( '' !== $country ) {
+        $country_args['country'] = $country;
+        $country_name            = $country;
+    }
+
+    // Resolve the point from the postcode first; only fall back to a free-text
+    // query that also includes the town when the postcode cannot be located.
     $queries = array(
-        array_merge( $base_args, array( 'postalcode' => $postal, 'city' => $city, 'country' => $country ) ),
-        array_merge( $base_args, array( 'q' => trim( $postal . ' ' . $city . ', ' . $country ) ) ),
+        array_merge( $base_args, $country_args, array( 'postalcode' => $postal ) ),
+        array_merge( $base_args, $country_args, array( 'q' => trim( $postal . ' ' . $city . ( $country_name ? ', ' . $country_name : '' ) ) ) ),
     );
 
     foreach ( $queries as $query ) {
@@ -117,7 +150,7 @@ function one01_mobform_geocode( $postal, $city, $country ) {
     }
 
     set_transient( $cache_key, 'not-found', HOUR_IN_SECONDS );
-    return new WP_Error( 'not_found', __( 'Could not locate that postal code and city.', '101-mobilization-form' ) );
+    return new WP_Error( 'not_found', __( 'Could not locate that postal code.', '101-mobilization-form' ) );
 }
 
 /**
@@ -154,6 +187,10 @@ function one01_mobform_handle_submit() {
     $start_time  = isset( $_POST['start_time'] ) ? sanitize_text_field( wp_unslash( $_POST['start_time'] ) ) : '';
     $asm_time    = isset( $_POST['assembly_time'] ) ? sanitize_text_field( wp_unslash( $_POST['assembly_time'] ) ) : '';
     $asm_place   = isset( $_POST['assembly_place'] ) ? sanitize_text_field( wp_unslash( $_POST['assembly_place'] ) ) : '';
+    $country     = isset( $_POST['country'] ) ? sanitize_text_field( wp_unslash( $_POST['country'] ) ) : '';
+    if ( '' === $country ) {
+        $country = $defaults['country'];
+    }
     $consent     = ! empty( $_POST['gdpr_consent'] );
 
     // Required fields.
@@ -182,8 +219,8 @@ function one01_mobform_handle_submit() {
         set_transient( $key, 1, max( 1, (int) $defaults['throttle'] ) );
     }
 
-    // Resolve the map point from the postal code + city.
-    $coords = one01_mobform_geocode( $postal_code, $city, $defaults['country'] );
+    // Resolve the map point from the postal code (town/country as fallback).
+    $coords = one01_mobform_geocode( $postal_code, $city, $country );
     $geo_ok = ! is_wp_error( $coords );
 
     $post_id = wp_insert_post( array(
@@ -215,6 +252,7 @@ function one01_mobform_handle_submit() {
     update_post_meta( $post_id, '_entry_group_url', $group_url );
     update_post_meta( $post_id, '_entry_city', $city );
     update_post_meta( $post_id, '_entry_postal_code', $postal_code );
+    update_post_meta( $post_id, '_entry_country', $country );
     update_post_meta( $post_id, '_entry_start_time', $start_time );
     update_post_meta( $post_id, '_entry_assembly_time', $asm_time );
     update_post_meta( $post_id, '_entry_assembly_place', $asm_place );
@@ -296,6 +334,7 @@ add_action( 'init', function () {
         '_entry_group_url',
         '_entry_city',
         '_entry_postal_code',
+        '_entry_country',
         '_entry_start_time',
         '_entry_assembly_time',
         '_entry_assembly_place',
@@ -404,6 +443,7 @@ function one01_mobform_render_form( $atts ) {
 
             <form class="omf-form" onsubmit="return one01MobformSubmit(event, '<?php echo esc_js( $form_id ); ?>');">
                 <input type="hidden" name="nonce" value="<?php echo esc_attr( $nonce ); ?>">
+                <input type="hidden" name="country" value="<?php echo esc_attr( $atts['country'] ); ?>">
                 <div class="omf-hp" aria-hidden="true">
                     <input type="text" name="website_hp" tabindex="-1" autocomplete="off">
                 </div>
@@ -754,9 +794,13 @@ add_action( 'admin_post_one01_mobform_regeocode', function () {
     $defaults = one01_mobform_defaults();
     $postal   = get_post_meta( $post_id, '_entry_postal_code', true );
     $city     = get_post_meta( $post_id, '_entry_city', true );
+    $country  = get_post_meta( $post_id, '_entry_country', true );
+    if ( '' === $country ) {
+        $country = $defaults['country'];
+    }
 
     if ( $postal && $city ) {
-        $coords = one01_mobform_geocode( $postal, $city, $defaults['country'] );
+        $coords = one01_mobform_geocode( $postal, $city, $country );
         if ( ! is_wp_error( $coords ) ) {
             update_post_meta( $post_id, '_hub_lat', $coords['lat'] );
             update_post_meta( $post_id, '_hub_lng', $coords['lng'] );
